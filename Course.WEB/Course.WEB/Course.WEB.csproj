@@ -213,6 +213,7 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MyViewModel\HomePageViewModel.cs" />
     <Compile Include="Models\MyViewModel\TopicTasksViewModel.cs" />
     <Compile Include="Models\Repositories\ClientProfileRepository.cs" />
     <Compile Include="Models\Repositories\CourseRepository.cs" />

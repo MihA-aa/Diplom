@@ -1,10 +1,7 @@
-﻿using Course.WEB.Models.Interfaces;
-using Course.WEB.Models.Repositories;
+﻿using Course.WEB.Models.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using de = Course.WEB.Models.Entities;
 using Course.WEB.Models.Entities;
@@ -16,13 +13,18 @@ namespace Course.WEB.Controllers
     public class HomeController : Controller
     {
         readonly EFUnitOfWork db = new EFUnitOfWork();
+
         public ActionResult Index()
         {
-            var disciplines = db.Disciplines.GetAll().ToList();
-            ViewBag.CountOfCourses = db.Courses.Count();
-            ViewBag.CountOfTopic = db.Topics.Count();
-            ViewBag.CountOfTasks = db.Tasks.Count();
-            return View(disciplines);
+            var viewModel = new HomePageViewModel
+            {
+                Disciplines = db.Disciplines.GetAll().ToList(),
+                CountOfCourses = db.Courses.Count(),
+                CountOfTopics = db.Topics.Count(),
+                CountOfTasks = db.Tasks.Count(),
+            };
+
+            return View(viewModel);
         }
         public ActionResult Show(string item)
         {
@@ -60,6 +62,7 @@ namespace Course.WEB.Controllers
         }
 
         #region Task methods
+
         [Authorize]
         public ActionResult CreateTask(int? topicId)
         {
@@ -72,6 +75,7 @@ namespace Course.WEB.Controllers
             ViewBag.TopicId = topic.Id;
             return View();
         }
+
         [HttpPost]
         [Authorize]
         public ActionResult CreateTask(Task task)
@@ -82,6 +86,7 @@ namespace Course.WEB.Controllers
             db.Save();
             return RedirectToAction("ShowTopic", new { topicId = task.TopicId });
         }
+
         [Authorize]
         public ActionResult RedactTask(int? taskId)
         {
@@ -90,10 +95,11 @@ namespace Course.WEB.Controllers
             var task = db.Tasks.Get(taskId.Value);
             if (task == null)
                 return HttpNotFound();
-            if (task.CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
-                return View(task);
-            return HttpNotFound();
+            if (!IsUserHasPermission(task.CreatorId))
+                return HttpNotFound();
+            return View(task);
         }
+
         [HttpPost]
         [Authorize]
         public ActionResult RedactTask(Task task)
@@ -104,6 +110,7 @@ namespace Course.WEB.Controllers
             db.Save();
             return RedirectToAction("ShowTopic", new { topicId = task.TopicId });
         }
+
         [HttpPost]
         public ActionResult DeleteTask(int? taskId)
         {
@@ -112,16 +119,13 @@ namespace Course.WEB.Controllers
             var task = db.Tasks.Get(taskId.Value);
             if (task == null)
                 return HttpNotFound();
-            if (task.CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
-            {
-                db.Tasks.Delete(taskId.Value);
-                db.Save();
-                return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
-            }
-            else{
+            if (!IsUserHasPermission(task.CreatorId))
                 return HttpNotFound();
-            }
+            db.Tasks.Delete(taskId.Value);
+            db.Save();
+            return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
         }
+
         [Authorize]
         public ActionResult SolveTask(int? taskId)
         {
@@ -132,6 +136,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             return View(task);
         }
+
         [HttpPost]
         [Authorize]
         public ActionResult SolveTask(Task task, string time)
@@ -142,6 +147,7 @@ namespace Course.WEB.Controllers
             if (oldtask == null)
                 return HttpNotFound();
             #region
+            var isSolved = task.Answer == oldtask.Answer;
             String[] substrings = time.Split(':');
             int sumTime = Convert.ToInt32(substrings[0]) * 3600;
             sumTime += Convert.ToInt32(substrings[1]) * 60;
@@ -159,11 +165,12 @@ namespace Course.WEB.Controllers
                 TaskId = oldtask.Id,
                 ApplicationUserId = User.Identity.GetUserId(),
                 ActualTime = sumTime,
-                ActualComplexity = actualComplexity
+                ActualComplexity = actualComplexity,
+                IsSolved = isSolved
             };
             db.Ratings.Create(rating);
             db.Save();
-            if (task.Answer == oldtask.Answer)
+            if (isSolved)
             {
                 TempData["message"] = string.Format("Задача \"{0}\" была решена верно, ваше время: {1} секунд"+
                     ", ваша сложность решения задачи: {2}", oldtask.Name, sumTime, actualComplexity);
@@ -179,6 +186,7 @@ namespace Course.WEB.Controllers
         #endregion
         
         #region Topic methods
+
         public ActionResult ShowTopic(int? topicId)
         {
             if (topicId == null)
@@ -221,15 +229,11 @@ namespace Course.WEB.Controllers
             var topic = db.Topics.Get(topicId.Value);
             if (topic == null)
                 return HttpNotFound();
-            if (topic.CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
-            {
-                db.Topics.Delete(topicId.Value);
-                db.Save();
-                return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
-            }
-            else{
+            if (IsUserHasPermission(topic.CreatorId))
                 return HttpNotFound();
-            }
+            db.Topics.Delete(topicId.Value);
+            db.Save();
+            return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
         }
         
         [Authorize]
@@ -240,9 +244,9 @@ namespace Course.WEB.Controllers
             var topic = db.Topics.Get(topicId.Value);
             if (topic == null)
                 return HttpNotFound();
-            if (topic.CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
-                return View(topic);
-            return HttpNotFound();
+            if (!IsUserHasPermission(topic.CreatorId))
+                return HttpNotFound();
+            return View(topic);
         }
         [HttpPost]
         [Authorize]
@@ -299,14 +303,11 @@ namespace Course.WEB.Controllers
             var course = db.Courses.Get(courseId.Value);
             if (course == null)
                 return HttpNotFound();
-            if (course.CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
-            {
-                db.Courses.Delete(courseId.Value);
-                db.Save();
-                return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
-            }
-            else
+            if (!IsUserHasPermission(course.CreatorId))
                 return HttpNotFound();
+            db.Courses.Delete(courseId.Value);
+            db.Save();
+            return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
         }
 
         [Authorize]
@@ -317,9 +318,9 @@ namespace Course.WEB.Controllers
             var course = db.Courses.Get(courseId.Value);
             if (course == null)
                 return HttpNotFound();
-            if (course.CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin") )
-                return View(course);
-            return HttpNotFound();
+            if (!IsUserHasPermission(course.CreatorId))
+                return HttpNotFound();
+            return View(course);
         }
         [HttpPost]
         [Authorize]
@@ -342,6 +343,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             return View(discipline);
         }
+
         [Authorize]
         public ActionResult CreateDiscipline()
         {
@@ -358,6 +360,7 @@ namespace Course.WEB.Controllers
             db.Save();
             return RedirectToAction("Index");
         }
+
         [Authorize]
         public ActionResult RedactDiscipline(int? disciplineId)
         {
@@ -366,10 +369,11 @@ namespace Course.WEB.Controllers
             var discipline = db.Disciplines.Get(disciplineId.Value);
             if (discipline == null)
                 return HttpNotFound();
-            if (discipline.CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin") )
-                return View(discipline);
-            return HttpNotFound();
+            if (!IsUserHasPermission(discipline.CreatorId))
+                return HttpNotFound();
+            return View(discipline);
         }
+
         [HttpPost]
         [Authorize]
         public ActionResult RedactDiscipline(Discipline discipline)
@@ -379,6 +383,11 @@ namespace Course.WEB.Controllers
             db.Disciplines.Update(discipline);
             db.Save();
             return RedirectToAction("Index");
+        }
+
+        private bool IsUserHasPermission(string creatorId)
+        {
+            return creatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin");
         }
     }
 }

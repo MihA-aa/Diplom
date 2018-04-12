@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Course.WEB.Models.Entities.Discipline>
+﻿@model Course.WEB.Models.MyViewModel.HomePageViewModel
 @using Microsoft.AspNet.Identity
 @{
     ViewBag.Title = "Главная страница";
@@ -39,17 +39,17 @@
      С использованием технологии адаптивного обучения, обучаемый получает возможность самостоятельно работать с учебным материалом,
      проходить контроль знаний и анализировать его результаты. Задания для контроля знаний подбираются с учетом успеваемости обучаемого. 
      Таким образом, вырабатывается индивидуальный подход к обучению.</div>
-    <div style="margin: 5px 10px;"><strong>Всего дисциплин:</strong> @Model.Count()</div>
-    <div style="margin: 5px 10px;"><strong>Всего курсов:</strong> @ViewBag.CountOfCourses</div>
-    <div style="margin: 5px 10px;"><strong>Всего тем:</strong> @ViewBag.CountOfTopic</div>
-    <div style="margin: 5px 10px;"><strong>Всего задач:</strong> @ViewBag.CountOfTasks</div>
+    <div style="margin: 5px 10px;"><strong>Всего дисциплин:</strong> @Model.Disciplines.Count</div>
+    <div style="margin: 5px 10px;"><strong>Всего курсов:</strong> @Model.CountOfCourses</div>
+    <div style="margin: 5px 10px;"><strong>Всего тем:</strong> @Model.CountOfTopics</div>
+    <div style="margin: 5px 10px;"><strong>Всего задач:</strong> @Model.CountOfTasks</div>
 </div>
 
 <h3 style="margin:10px;">Дисциплины: </h3>
 <div>
-    @for (int i = 0; i < Model.Count(); i++)
+    @for (int i = 0; i < Model.Disciplines.Count(); i++)
     {
-        if (Model.ToList()[i].CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
+        if (Model.Disciplines.ToList()[i].CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
         {
             if (User.Identity.IsAuthenticated)
             {
@@ -58,14 +58,14 @@
                     style = "display: inline-block; right: 310px; position: absolute; margin-top: 2px; "
                 }))
                 {
-                    @Html.Hidden("disciplineId", Model.ToList()[i].Id)
+                    @Html.Hidden("disciplineId", Model.Disciplines.ToList()[i].Id)
                     <button type="submit" class="btn btn-default btn-mine"
                             style="padding: 0px 7px;">
                         <span class="glyphicon glyphicon-pencil" aria-hidden="true"
                               style="font-size: 20px;"></span>
                     </button>
                 }
-                using (Html.BeginForm("DeleteDiscipline", "Home", new { disciplineId = Model.ToList()[i].Id }, FormMethod.Post, new
+                using (Html.BeginForm("DeleteDiscipline", "Home", new { disciplineId = Model.Disciplines.ToList()[i].Id }, FormMethod.Post, new
                 {
                     style = "display: inline-block; right: 270px; position: absolute; margin-top: 2px; "
                 }))
@@ -81,7 +81,7 @@
                     style = "display: inline-block; right: 230px; position: absolute; margin-top: 2px; "
                 }))
                 {
-                    @Html.Hidden("disciplineId", Model.ToList()[i].Id)
+                    @Html.Hidden("disciplineId", Model.Disciplines.ToList()[i].Id)
                     <button type="submit" class="btn btn-default btn-mine"
                             style="padding: 0px 7px;">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"
@@ -92,12 +92,12 @@
         }
         <div class="item transition">
                 <h4 style="font-size: 15px; padding: 8px;">
-                    @(i + 1). @Model.ToList()[i].Name
+                    @(i + 1). @Model.Disciplines.ToList()[i].Name
                 </h4>
         </div>
         
         <div class="subItemList">
-            @foreach (var course in Model.ToList()[i].Courses)
+            @foreach (var course in Model.Disciplines.ToList()[i].Courses)
             {
             <a href="@Url.Action("ShowCourse", "Home", new { courseId = course.Id }, null)"
                style="text-decoration: none;">
@@ -111,6 +111,7 @@
         </div>
     }
 </div>
+
 @section Scripts {
     <script>
         $(".item").click(function () {

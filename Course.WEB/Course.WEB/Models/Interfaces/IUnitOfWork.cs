@@ -12,9 +12,13 @@ namespace Course.WEB.Models.Interfaces
     public interface IUnitOfWork : IDisposable
     {
         IRepository<de.Course> Courses { get; }
+
         IRepository<Discipline> Disciplines { get; }
+
         IRepository<Rating> Ratings { get; }
+
         IRepository<de.Task> Tasks { get; }
+
         IRepository<Topic> Topics { get; }
 
         void Save();

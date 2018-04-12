@@ -12,12 +12,19 @@ namespace Course.WEB.Models
     public class ApplicationUser : IdentityUser
     {
         public string FirstName { get; set; }
+
         public string MiddleName { get; set; }
+
         public string LastName { get; set; }
+
         public virtual ICollection<de.Task> Tasks { get; set; }
+
         public virtual ICollection<Rating> Ratings { get; set; }
+
         public virtual ICollection<de.Course> Courses { get; set; }
+
         public virtual ICollection<Topic> Topics { get; set; }
+
         public virtual ICollection<Discipline> Disciplines { get; set; }
 
         public ApplicationUser()
@@ -42,9 +49,13 @@ namespace Course.WEB.Models
             Database.SetInitializer<ApplicationDbContext>(new StoreDbInitializer());
         }
         public DbSet<de.Course> Courses { get; set; }
+
         public DbSet<Discipline> Disciplines { get; set; }
+
         public DbSet<Rating> Ratings { get; set; }
+
         public DbSet<de.Task> Tasks { get; set; }
+
         public DbSet<Topic> Topics { get; set; }
 
         public static ApplicationDbContext Create()
