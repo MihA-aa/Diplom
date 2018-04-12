@@ -1,0 +1,43 @@
+﻿@model Course.WEB.Models.Entities.Discipline
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Создание дисциплины";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<div id="infaCreate">
+    @using (Html.BeginForm("CreateDiscipline", "Home", FormMethod.Post, new { style = "" }))
+            {
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        @Html.Hidden("CreatorId", User.Identity.GetUserId())
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name)
+            @Html.EditorFor(model => model.Name, new
+       {
+           htmlAttributes = new { @class = "form-control", placeholder = "Тема 21" },
+       })
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description)
+            @Html.TextAreaFor(model => model.Description, 5, 50, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Description)
+        </div>
+        <br />
+        <div>
+            <button type="submit" class="btn btn-default btn-mine">
+                <span class="fi-save" style="font-size: 18px;"> Сохранить </span>
+            </button>
+            <button type="button" class="btn btn-default btn-mine">
+                <span class="fi-x" style="font-size: 18px;">
+                    @Html.ActionLink("Отмена", "Index", "Home",  new
+                   {
+                       style = "color: #333333; text-decoration: none; "
+                   })
+                </span>
+            </button>
+        </div>
+    }
+</div>

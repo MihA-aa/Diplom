@@ -1,0 +1,120 @@
+﻿@model IEnumerable<Course.WEB.Models.Entities.Discipline>
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Главная страница";
+}
+<style>
+    .item {
+        background: #f7f3ef;
+        margin: 10px;
+        margin-right: 120px;
+        cursor: pointer;
+        color: #428bca;
+    }
+    .subItem{
+        background: #f7f3ef;
+        margin: 10px;
+        margin-right: 120px;
+        margin-left: 65px;
+    }
+    .subItem:hover{
+        background: #adf;
+    }
+        .item:hover {
+            background: #a8ca43;
+        }
+
+    .transition {
+        transition: 1s;
+    }
+    .subItemList{
+        display: none;
+    }
+</style>
+<h2>Формирование элекротнных учебных курсов</h2>
+
+<div style="margin: 25px 100px 25px 10px;">
+    <div style="margin: 10px;">Данная система включает в себя методические материалы к элективным курсам, объединенным по темам в различные курсы.
+     Методические материалы включают теоретический и справочный материал, примеры решения задач, задачи для самостоятельного решения.
+     С использованием технологии адаптивного обучения, обучаемый получает возможность самостоятельно работать с учебным материалом,
+     проходить контроль знаний и анализировать его результаты. Задания для контроля знаний подбираются с учетом успеваемости обучаемого. 
+     Таким образом, вырабатывается индивидуальный подход к обучению.</div>
+    <div style="margin: 5px 10px;"><strong>Всего дисциплин:</strong> @Model.Count()</div>
+    <div style="margin: 5px 10px;"><strong>Всего курсов:</strong> @ViewBag.CountOfCourses</div>
+    <div style="margin: 5px 10px;"><strong>Всего тем:</strong> @ViewBag.CountOfTopic</div>
+    <div style="margin: 5px 10px;"><strong>Всего задач:</strong> @ViewBag.CountOfTasks</div>
+</div>
+
+<h3 style="margin:10px;">Дисциплины: </h3>
+<div>
+    @for (int i = 0; i < Model.Count(); i++)
+    {
+        if (Model.ToList()[i].CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                using (Html.BeginForm("RedactDiscipline", "Home", FormMethod.Get, new
+                {
+                    style = "display: inline-block; right: 310px; position: absolute; margin-top: 2px; "
+                }))
+                {
+                    @Html.Hidden("disciplineId", Model.ToList()[i].Id)
+                    <button type="submit" class="btn btn-default btn-mine"
+                            style="padding: 0px 7px;">
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"
+                              style="font-size: 20px;"></span>
+                    </button>
+                }
+                using (Html.BeginForm("DeleteDiscipline", "Home", new { disciplineId = Model.ToList()[i].Id }, FormMethod.Post, new
+                {
+                    style = "display: inline-block; right: 270px; position: absolute; margin-top: 2px; "
+                }))
+                {
+                    <button type="submit" class="btn btn-default btn-mine"
+                            style="padding: 0px 7px;">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                              style="font-size: 20px;"></span>
+                    </button>
+                }
+                using (Html.BeginForm("CreateCourse", "Home", FormMethod.Get, new
+                {
+                    style = "display: inline-block; right: 230px; position: absolute; margin-top: 2px; "
+                }))
+                {
+                    @Html.Hidden("disciplineId", Model.ToList()[i].Id)
+                    <button type="submit" class="btn btn-default btn-mine"
+                            style="padding: 0px 7px;">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"
+                              style="font-size: 20px;"></span>
+                    </button>
+                }
+            }
+        }
+        <div class="item transition">
+                <h4 style="font-size: 15px; padding: 8px;">
+                    @(i + 1). @Model.ToList()[i].Name
+                </h4>
+        </div>
+        
+        <div class="subItemList">
+            @foreach (var course in Model.ToList()[i].Courses)
+            {
+            <a href="@Url.Action("ShowCourse", "Home", new { courseId = course.Id }, null)"
+               style="text-decoration: none;">
+                <div class="subItem transition">
+                    <h4 style="font-size: 15px; padding: 8px;">
+                        @course.Name
+                    </h4>
+                </div>
+            </a>
+            }
+        </div>
+    }
+</div>
+@section Scripts {
+    <script>
+        $(".item").click(function () {
+            $(this).next(".subItemList").slideToggle(500)
+        });
+    </script>
+}

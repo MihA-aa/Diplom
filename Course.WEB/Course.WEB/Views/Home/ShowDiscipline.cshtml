@@ -1,0 +1,91 @@
+﻿@model Course.WEB.Models.Entities.Discipline
+@using Microsoft.AspNet.Identity
+
+@{
+    ViewBag.Title = Model.Name;
+}
+<style>
+    .item{
+        background: #f7f3ef; 
+        margin: 10px; 
+        margin-right: 120px
+    }
+    .item:hover{
+        background: #a8ca43;
+    }
+    .transition{
+        transition: 1s;
+    }
+</style>
+<h2>Дисциплина - @Model.Name</h2>
+<div style="margin: 25px 100px 25px 10px;">
+    <div style="margin: 10px;">@Model.Description</div>
+    <div style="margin: 5px 10px;">
+        <a href="@Url.Action("Index", "Home", null)">Все дисциплины</a>
+    </div>
+    <div style="margin: 5px 10px;"><strong>Всего курсов в дисциплине:</strong> @Model.Courses.Count()</div>
+</div>
+@if (Model.Courses.Count() == 0)
+{
+    <h3 style="margin: 10px; margin-bottom: 15px;">В этой дисциплине ещё нет ни одного курса</h3>
+}
+else
+{
+<h3 style="margin: 10px; margin-bottom: 15px;">Курсы по дисциплине: </h3>
+<div>
+    @for (int i = 0; i < Model.Courses.Count(); i++)
+    {
+        <a href="@Url.Action("ShowCourse", "Home", new { courseId = Model.Courses.ToList()[i].Id }, null)"
+           style="text-decoration: none;">
+            <div class="item transition">
+                <h4 style="font-size: 15px; padding: 8px;">
+                    @(i + 1). @Model.Courses.ToList()[i].Name
+                </h4>
+            </div>
+        </a>
+        if (Model.Courses.ToList()[i].Creator.Id == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
+        {
+            <div style="right: 235px; position: absolute; margin-top: -40px;">
+            @using (Html.BeginForm("RedactCourse", "Home", FormMethod.Get, new
+            {
+                style = "display: inline-block; margin-right: 5px;"
+            }))
+            {
+                @Html.Hidden("courseId", Model.Courses.ToList()[i].Id)
+                <button type="submit" class="btn btn-default btn-mine"
+                        style="padding: 0px 7px;">
+                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"
+                          style="font-size: 20px;"></span>
+                </button>
+            }
+            @using (Html.BeginForm("DeleteCourse", "Home", new { courseId = Model.Courses.ToList()[i].Id }, FormMethod.Post, new
+            {
+                style = "display: inline-block;"
+            }))
+            {
+                <button type="submit" class="btn btn-default btn-mine"
+                        style="padding: 0px 7px;">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                          style="font-size: 20px;"></span>
+                </button>
+            }
+            </div>
+        }
+    }
+</div>
+}
+@if (User.IsInRole("admin") || User.IsInRole("superAdmin"))
+{
+    using (Html.BeginForm("CreateCourse", "Home", FormMethod.Get, new
+    {
+        style = "display: inline-block; margin-left: 10px;"
+    }))
+    {
+    @Html.Hidden("disciplineId", Model.Id)
+    <button type="submit" class="btn btn-default btn-mine"
+            style="">
+        <span class="glyphicon glyphicon-plus" aria-hidden="true"
+              style="font-size: 20px;"></span> Добавить курс в дисциплину
+    </button>
+    }
+}

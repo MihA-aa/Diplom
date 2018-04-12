@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNet.Identity
+@using Microsoft.AspNet.Identity.EntityFramework
+@using Course.WEB.Models
+@model List<AdminPanelViewModel>
+@{
+    ViewBag.Title = "Administration";
+}
+
+<h2>Управление пользователями</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            Имя
+        </th>
+        <th>
+            Преподаватель
+        </th>
+        <th>
+            Главный Преподаватель
+        </th>
+        <th>
+            Действие
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.User.UserName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsAdmin)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsSuperAdmin)
+            </td>
+            <td>
+                @Ajax.ActionLink("Назначить Преподавателем", "Upgrade", "Admin", new { id = item.User.Id }, new AjaxOptions { HttpMethod = "POST", OnComplete = "location.reload()" }) |
+                @Ajax.ActionLink("Главным Преподавателем", "UpgradSuper", "Admin", new { id = item.User.Id }, new AjaxOptions { HttpMethod = "POST", OnComplete = "location.reload()" })
+                @if (User.IsInRole("admin") || User.IsInRole("superAdmin"))
+                {  @Ajax.ActionLink("Понизить", "LevelDown", "Admin", new { id = item.User.Id }, new AjaxOptions { HttpMethod = "POST", OnComplete = "location.reload()" })
+                }
+            </td>
+        </tr>
+    }
+</table>

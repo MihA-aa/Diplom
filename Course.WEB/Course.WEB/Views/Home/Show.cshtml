@@ -1,0 +1,42 @@
+﻿@model Dictionary<string, string>[]
+@{
+    ViewBag.Title = ViewBag.table;
+}
+<h2>@ViewBag.table</h2>
+
+<table id="example" class="display" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            @foreach (var c in Model.First())
+            {
+                <th>@c.Key</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var course in Model)
+    {
+        <tr>
+            @foreach (var c in course)
+            {
+                if (c.Key == "Название" && course.First().Key == "Id")
+                {
+                    <td>@Html.ActionLink(c.Value, "SolveTask", "Home", new { taskId = course.First().Value }, null)</td>
+                }
+                else
+                {
+                    <td>@c.Value</td>
+                }
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+  $(function(){
+    $("#example").dataTable();
+  })
+</script>
+}
