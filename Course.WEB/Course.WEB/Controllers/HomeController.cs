@@ -58,6 +58,7 @@ namespace Course.WEB.Controllers
                     break;
             }
             ViewBag.table = item;
+
             return View(DictProperties);
         }
 
@@ -73,6 +74,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             ViewBag.Topic = topic.Name;
             ViewBag.TopicId = topic.Id;
+
             return View();
         }
 
@@ -84,6 +86,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Tasks.Create(task);
             db.Save();
+
             return RedirectToAction("ShowTopic", new { topicId = task.TopicId });
         }
 
@@ -97,6 +100,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             if (!IsUserHasPermission(task.CreatorId))
                 return HttpNotFound();
+
             return View(task);
         }
 
@@ -108,6 +112,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Tasks.Update(task);
             db.Save();
+
             return RedirectToAction("ShowTopic", new { topicId = task.TopicId });
         }
 
@@ -123,6 +128,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Tasks.Delete(taskId.Value);
             db.Save();
+
             return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
         }
 
@@ -134,6 +140,7 @@ namespace Course.WEB.Controllers
             var task = db.Tasks.Get(taskId.Value);
             if (task == null)
                 return HttpNotFound();
+
             return View(task);
         }
 
@@ -146,41 +153,29 @@ namespace Course.WEB.Controllers
             var oldtask = db.Tasks.Get(task.Id);
             if (oldtask == null)
                 return HttpNotFound();
-            #region
+
+            #region calculation
             var isSolved = task.Answer == oldtask.Answer;
-            String[] substrings = time.Split(':');
+            string[] substrings = time.Split(':');
             int sumTime = Convert.ToInt32(substrings[0]) * 3600;
             sumTime += Convert.ToInt32(substrings[1]) * 60;
             sumTime += Convert.ToInt32(substrings[2].Split('.')[0]);
-            decimal actualComplexity;
-            if (sumTime < oldtask.PlannedTime)
-                actualComplexity = 1.0m;
-            else if (sumTime > oldtask.PlannedTime * 2)
-                actualComplexity = 10.0m;
-            else
-                actualComplexity = (decimal)sumTime * 10 / oldtask.PlannedTime;
             #endregion
-            Rating rating = new Rating
+
+            var rating = new Rating
             {
                 TaskId = oldtask.Id,
                 ApplicationUserId = User.Identity.GetUserId(),
                 ActualTime = sumTime,
-                ActualComplexity = actualComplexity,
+                DateOfSolution = DateTime.Now,
                 IsSolved = isSolved
             };
             db.Ratings.Create(rating);
             db.Save();
-            if (isSolved)
-            {
-                TempData["message"] = string.Format("Задача \"{0}\" была решена верно, ваше время: {1} секунд"+
-                    ", ваша сложность решения задачи: {2}", oldtask.Name, sumTime, actualComplexity);
-                TempData["resolve"] = string.Format("True");
-            }
-            else
-            {
-                TempData["message"] = string.Format("Задача \"{0}\" была решена не верно, ваше время: {1} секунд", oldtask.Name, sumTime);
-                TempData["resolve"] = string.Format("False");
-            }
+
+            TempData["message"] = string.Format("Задача \"{0}\" была решена "+ (isSolved ? "":"не") +"верно, ваше время: {1} секунд", oldtask.Name, sumTime);
+            TempData["resolve"] = isSolved;
+
             return RedirectToAction("ShowTopic", new { topicId = oldtask.TopicId });
         }
         #endregion
@@ -194,6 +189,7 @@ namespace Course.WEB.Controllers
             var topic = db.Topics.Get(topicId.Value);
             if (topic == null)
                 return HttpNotFound();
+
             return View(topic);
         }
 
@@ -207,6 +203,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             ViewBag.Course = course.Name;
             ViewBag.CourseId = course.Id;
+
             return View();
         }
 
@@ -218,6 +215,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Topics.Create(topic);
             db.Save();
+
             return RedirectToAction("ShowCourse", new { courseId = topic.CourseId });
         }
 
@@ -233,6 +231,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Topics.Delete(topicId.Value);
             db.Save();
+
             return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
         }
         
@@ -246,6 +245,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             if (!IsUserHasPermission(topic.CreatorId))
                 return HttpNotFound();
+
             return View(topic);
         }
         [HttpPost]
@@ -256,6 +256,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Topics.Update(topic);
             db.Save();
+
             return RedirectToAction("ShowCourse", new { courseId = topic.CourseId });
         }
         #endregion
@@ -269,6 +270,7 @@ namespace Course.WEB.Controllers
             var course = db.Courses.Get(courseId.Value);
             if (course == null)
                 return HttpNotFound();
+
             return View(course);
         }
         [Authorize]
@@ -281,6 +283,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             ViewBag.Discipline = discipline.Name;
             ViewBag.DisciplineId = discipline.Id;
+
             return View();
         }
 
@@ -292,6 +295,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Courses.Create(course);
             db.Save();
+
             return RedirectToAction("ShowDiscipline", new { disciplineId = course.DisciplineId });
         }
 
@@ -307,6 +311,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Courses.Delete(courseId.Value);
             db.Save();
+
             return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
         }
 
@@ -320,6 +325,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             if (!IsUserHasPermission(course.CreatorId))
                 return HttpNotFound();
+
             return View(course);
         }
         [HttpPost]
@@ -330,9 +336,12 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Courses.Update(course);
             db.Save();
+
             return RedirectToAction("ShowDiscipline", new { disciplineId = course.DisciplineId });
         }
         #endregion
+
+        #region Discipline methods
 
         public ActionResult ShowDiscipline(int? disciplineId)
         {
@@ -341,6 +350,7 @@ namespace Course.WEB.Controllers
             var discipline = db.Disciplines.Get(disciplineId.Value);
             if (discipline == null)
                 return HttpNotFound();
+
             return View(discipline);
         }
 
@@ -358,6 +368,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Disciplines.Create(discipline);
             db.Save();
+
             return RedirectToAction("Index");
         }
 
@@ -371,6 +382,7 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             if (!IsUserHasPermission(discipline.CreatorId))
                 return HttpNotFound();
+
             return View(discipline);
         }
 
@@ -382,8 +394,11 @@ namespace Course.WEB.Controllers
                 return HttpNotFound();
             db.Disciplines.Update(discipline);
             db.Save();
+
             return RedirectToAction("Index");
         }
+
+        #endregion
 
         private bool IsUserHasPermission(string creatorId)
         {

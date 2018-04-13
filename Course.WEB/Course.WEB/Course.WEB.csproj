@@ -199,6 +199,8 @@
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Models\Entities\StudentStatistic.cs" />
+    <Compile Include="Models\Entities\TaskStatistic.cs" />
     <Compile Include="Models\Interfaces\IGetProperties.cs" />
     <Compile Include="Models\Interfaces\IRepository.cs" />
     <Compile Include="Models\Interfaces\IUnitOfWork.cs" />
@@ -218,10 +220,12 @@
     <Compile Include="Models\Repositories\ClientProfileRepository.cs" />
     <Compile Include="Models\Repositories\CourseRepository.cs" />
     <Compile Include="Models\Repositories\DisciplineRepository.cs" />
-    <Compile Include="Models\Repositories\EFUnitOfWork.cs" />
+    <Compile Include="Models\EFUnitOfWork.cs" />
     <Compile Include="Models\Repositories\GenericRepository.cs" />
     <Compile Include="Models\Repositories\RatingRepository.cs" />
+    <Compile Include="Models\Repositories\StudentStatisticRepository.cs" />
     <Compile Include="Models\Repositories\TaskRepository.cs" />
+    <Compile Include="Models\Repositories\TaskStatisticRepository.cs" />
     <Compile Include="Models\Repositories\TopicRepository.cs" />
     <Compile Include="Models\Repositories\UserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

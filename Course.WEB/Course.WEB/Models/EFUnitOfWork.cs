@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Data.Entity;
-using Course.WEB.Models;
 using Course.WEB.Models.Interfaces;
 using Course.WEB.Models.Entities;
 using de = Course.WEB.Models.Entities;
@@ -17,11 +13,14 @@ namespace Course.WEB.Models.Repositories
         private RatingRepository ratingRepository;
         private TaskRepository taskRepository;
         private TopicRepository topicRepository;
-        
+        private TaskStatisticRepository taskStatisticRepository;
+        private StudentStatisticRepository studentStatisticRepository;
+
         public EFUnitOfWork()
         {
             db = new ApplicationDbContext();
         }
+
         public IRepository<de.Course> Courses
         {
             get
@@ -31,6 +30,7 @@ namespace Course.WEB.Models.Repositories
                 return courseRepository;
             }
         }
+
         public IRepository<Discipline> Disciplines
         {
             get
@@ -40,6 +40,7 @@ namespace Course.WEB.Models.Repositories
                 return disciplineRepository;
             }
         }
+
         public IRepository<Rating> Ratings
         {
             get
@@ -59,6 +60,7 @@ namespace Course.WEB.Models.Repositories
                 return taskRepository;
             }
         }
+
         public IRepository<Topic> Topics
         {
             get
@@ -68,6 +70,28 @@ namespace Course.WEB.Models.Repositories
                 return topicRepository;
             }
         }
+
+        public IRepository<TaskStatistic> TaskStatistics
+        {
+            get
+            {
+                if (taskStatisticRepository == null)
+                    taskStatisticRepository = new TaskStatisticRepository(db);
+                return taskStatisticRepository;
+            }
+        }
+
+
+        public IRepository<StudentStatistic> StudentStatistics
+        {
+            get
+            {
+                if (studentStatisticRepository == null)
+                    studentStatisticRepository = new StudentStatisticRepository(db);
+                return studentStatisticRepository;
+            }
+        }
+
         public void Save()
         {
             db.SaveChanges();

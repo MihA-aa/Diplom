@@ -1,11 +1,8 @@
-﻿using Course.WEB.Models;
-using Course.WEB.Models.Interfaces;
+﻿using Course.WEB.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Course.WEB.Models.Repositories
 {

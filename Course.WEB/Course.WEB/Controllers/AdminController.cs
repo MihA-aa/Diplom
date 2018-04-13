@@ -3,10 +3,7 @@ using Course.WEB.Models.Repositories;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 
@@ -37,6 +34,7 @@ namespace Course.WEB.Controllers
             ApplicationUser applicationUser = userRepository.GetUser(id);
             if (applicationUser == null)
                 return HttpNotFound();
+
             return View(applicationUser);
         }
 

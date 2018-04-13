@@ -58,6 +58,10 @@ namespace Course.WEB.Models
 
         public DbSet<Topic> Topics { get; set; }
 
+        public DbSet<TaskStatistic> TaskStatistics { get; set; }
+
+        public DbSet<StudentStatistic> StudentStatistics { get; set; }
+
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();
@@ -194,6 +198,7 @@ namespace Course.WEB.Models
                 PlannedTime = 410, AverageTime = 143, Answer = "-arctg(2)+πk", Name = "Задача 2.3", Condition= "sinx + 2cosx = 0. Чему равен x?",
                 PeriodicityOfRequirement = 1.1m, PeriodicityOfVisiting = 0.2m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d"});
             #endregion
+
             db.SaveChanges();
         }
     }
