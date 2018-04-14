@@ -201,6 +201,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Models\Entities\StudentStatistic.cs" />
     <Compile Include="Models\Entities\TaskStatistic.cs" />
+    <Compile Include="Models\Entities\TopicStatistic.cs" />
     <Compile Include="Models\Interfaces\IGetProperties.cs" />
     <Compile Include="Models\Interfaces\IRepository.cs" />
     <Compile Include="Models\Interfaces\IUnitOfWork.cs" />
@@ -227,6 +228,7 @@
     <Compile Include="Models\Repositories\TaskRepository.cs" />
     <Compile Include="Models\Repositories\TaskStatisticRepository.cs" />
     <Compile Include="Models\Repositories\TopicRepository.cs" />
+    <Compile Include="Models\Repositories\TopicStatisticRepository.cs" />
     <Compile Include="Models\Repositories\UserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />

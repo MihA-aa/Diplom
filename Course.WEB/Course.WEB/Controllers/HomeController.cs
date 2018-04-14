@@ -165,7 +165,7 @@ namespace Course.WEB.Controllers
             var rating = new Rating
             {
                 TaskId = oldtask.Id,
-                ApplicationUserId = User.Identity.GetUserId(),
+                StudentId = User.Identity.GetUserId(),
                 ActualTime = sumTime,
                 DateOfSolution = DateTime.Now,
                 IsSolved = isSolved

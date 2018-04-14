@@ -1,10 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Course.WEB.Models.Entities
+﻿namespace Course.WEB.Models.Entities
 {
     public class TaskStatistic
     {
-        [Key]
+        public int Id { get; set; }
+
         public int TaskId { get; set; }
 
         public int SolvedCount { get; set; }
@@ -16,13 +15,5 @@ namespace Course.WEB.Models.Entities
         public decimal PartOfIncorrectAnswers { get; set; }
 
         public decimal LogitOfTaskDifficulty { get; set; }
-
-        public decimal Variation { get; set; }
-
-        public decimal Dispersion { get; set; }
-
-        public decimal StandartDeviation { get; set; }
-
-        public decimal CorrelationСoefficient { get; set; }
     }
 }

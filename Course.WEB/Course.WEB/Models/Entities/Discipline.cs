@@ -1,11 +1,6 @@
-﻿using Course.WEB.Models;
-using Course.WEB.Models.Interfaces;
-using System;
+﻿using Course.WEB.Models.Interfaces;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Course.WEB.Models.Entities
 {

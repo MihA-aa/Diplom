@@ -1,0 +1,69 @@
+CREATE TRIGGER UpdateTaskStatistic
+	ON Ratings
+	AFTER INSERT
+AS
+BEGIN
+	DECLARE @TaskId INT
+	SELECT @TaskId = INSERTED.TaskId FROM INSERTED
+
+	IF NOT EXISTS(SELECT * FROM TaskStatistics WHERE TaskId = @TaskId)
+    BEGIN
+      INSERT INTO TaskStatistics
+	  VALUES(@TaskId, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+    END
+	EXEC RecalculationOfTaskStatistic @TaskId
+END
+
+CREATE PROCEDURE RecalculationOfTaskStatistic(@TaskId INT) AS
+BEGIN
+	UPDATE TaskStatistic
+	SET SolvedCount = 1
+	Where TaskId = @TaskId
+END
+
+
+
+
+ALTER PROCEDURE RecalculationOfTaskStatistic(@TaskId INT) AS
+BEGIN
+	SELECT * FROM Ratings
+	WHERE TaskId = @TaskId
+
+
+	UPDATE TaskStatistics
+	SET SolvedCount = 1
+	Where TaskId = @TaskId
+END
+
+INSERT INTO Ratings
+Values(11, 5, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.04.2018')
+
+
+
+DECLARE @TaskId INT = 3, @SolvedCount FLOAT, @SolvedCorrectCount FLOAT;
+DECLARE @PartOfCorrectAnswers FLOAT, @PartOfIncorrectAnswers FLOAT, @LogitOfTaskDifficulty FLOAT;
+
+If(OBJECT_ID('tempdb..#TempTableForSolvedStat') IS NOT NULL)
+BEGIN
+    DROP TABLE #TempTableForSolvedStat
+END
+
+SELECT DISTINCT
+	First_Value(IsSolved) OVER (PARTITION BY StudentId, TaskId ORDER BY DateOfSolution) IsSolved
+INTO #TempTableForSolvedStat
+FROM Ratings
+WHERE TaskId = @TaskId
+
+SELECT @SolvedCount = COUNT(IsSolved) FROM #TempTableForSolvedStat
+SELECT @SolvedCorrectCount = COUNT(IsSolved) FROM #TempTableForSolvedStat WHERE IsSolved = 1
+
+SET @PartOfCorrectAnswers = @SolvedCorrectCount/@SolvedCount
+SET @PartOfIncorrectAnswers = (@SolvedCount - @SolvedCorrectCount)/@SolvedCount
+SET @LogitOfTaskDifficulty = LOG(@PartOfIncorrectAnswers/@PartOfCorrectAnswers)
+
+SELECT @SolvedCount AS 'SolvedCount', @SolvedCorrectCount AS 'SolvedCorrectCount',
+@PartOfCorrectAnswers AS 'PartOfCorrectAnswers', @PartOfIncorrectAnswers AS 'PartOfIncorrectAnswers',
+@LogitOfTaskDifficulty AS 'LogitOfTaskDifficulty'
+
+
+

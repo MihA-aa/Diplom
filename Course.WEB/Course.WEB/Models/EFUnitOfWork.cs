@@ -15,6 +15,7 @@ namespace Course.WEB.Models.Repositories
         private TopicRepository topicRepository;
         private TaskStatisticRepository taskStatisticRepository;
         private StudentStatisticRepository studentStatisticRepository;
+        private TopicStatisticRepository topicStatisticRepository;
 
         public EFUnitOfWork()
         {
@@ -80,8 +81,7 @@ namespace Course.WEB.Models.Repositories
                 return taskStatisticRepository;
             }
         }
-
-
+        
         public IRepository<StudentStatistic> StudentStatistics
         {
             get
@@ -92,6 +92,16 @@ namespace Course.WEB.Models.Repositories
             }
         }
 
+        public IRepository<TopicStatistic> TopicStatistics
+        {
+            get
+            {
+                if (topicStatisticRepository == null)
+                    topicStatisticRepository = new TopicStatisticRepository(db);
+                return topicStatisticRepository;
+            }
+        }
+        
         public void Save()
         {
             db.SaveChanges();

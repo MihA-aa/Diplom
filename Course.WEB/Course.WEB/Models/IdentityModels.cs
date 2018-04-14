@@ -62,6 +62,8 @@ namespace Course.WEB.Models
 
         public DbSet<StudentStatistic> StudentStatistics { get; set; }
 
+        public DbSet<TopicStatistic> TopicStatistics { get; set; }
+        
         public static ApplicationDbContext Create()
         {
             return new ApplicationDbContext();

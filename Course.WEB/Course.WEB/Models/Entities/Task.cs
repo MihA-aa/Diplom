@@ -2,9 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Course.WEB.Models.Entities
 {
@@ -42,6 +39,10 @@ namespace Course.WEB.Models.Entities
         [StringLength(500, MinimumLength = 3, ErrorMessage = "Условие должно быть больше 3 и меньше 500 символов")]
         [Display(Name = "Условие задачи")]
         public string Condition { get; set; }
+
+        [Range(typeof(int), "0", "20", ErrorMessage = "Значение должно быть в пределе от {1} до {2}.")]
+        [Display(Name = "Вес задачи")]
+        public int Weight { get; set; }
 
         public int TopicId { get; set; }
 
