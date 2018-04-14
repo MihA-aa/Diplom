@@ -74,6 +74,58 @@ namespace Course.WEB.Models
     {
         protected override void Seed(ApplicationDbContext db)
         {
+            #region Users
+
+            var mihail = new ApplicationUser
+            {
+                Id = "65c13a33-5a3e-450c-bd46-503f878e929d",
+                LastName = "Ермолаев",
+                FirstName = "Михаил",
+                MiddleName = "Сергеевич",
+                Email = "AMihA_aa@mail.ru",
+                PasswordHash = "Password",
+                UserName = "Михаил"
+            };
+
+            var admin = new ApplicationUser
+            {
+                Id = "1a676be3-90a7-4dc6-b279-6c051205020b",
+                LastName = "User",
+                FirstName = "Some",
+                MiddleName = "Сергеевич",
+                Email = "somemail@mail.ru",
+                PasswordHash = "Password",
+                UserName = "Mihail"
+            };
+
+            var user1 = new ApplicationUser
+            {
+                Id = "c13a33e3-90a7-4dc6-b279-503f878e929d",
+                LastName = "User1",
+                FirstName = "User1",
+                MiddleName = "User1",
+                Email = "User1@mail.ru",
+                PasswordHash = "Password",
+                UserName = "User1"
+            };
+            
+            var user2 = new ApplicationUser
+            {
+                Id = "4dc66be3-90a7-4dc6-b279-6c051205b279",
+                LastName = "User2",
+                FirstName = "User2",
+                MiddleName = "User2",
+                Email = "User2@mail.ru",
+                PasswordHash = "Password",
+                UserName = "User2"
+            };
+
+            db.Users.Add(mihail);
+            db.Users.Add(admin);
+            db.Users.Add(user1);
+            db.Users.Add(user2);
+
+            #endregion
             #region Create role
             var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
@@ -86,7 +138,6 @@ namespace Course.WEB.Models
             roleManager.Create(role1);
             roleManager.Create(role2);
             
-            var admin = new ApplicationUser { Email = "somemail@mail.ru", UserName = "somemail@mail.ru" };
             string password = "ad46D_ewr3";
             var result = userManager.Create(admin, password);
             
@@ -95,18 +146,6 @@ namespace Course.WEB.Models
                 userManager.AddToRole(admin.Id, role1.Name);
                 userManager.AddToRole(admin.Id, role2.Name);
             }
-            #endregion
-            #region Users
-            db.Users.Add(new ApplicationUser
-            {
-                Id = "65c13a33-5a3e-450c-bd46-503f878e929d",
-                LastName = "Ермолаев",
-                FirstName = "Михаил",
-                MiddleName = "Сергеевич",
-                Email = "AMihA_aa@mail.ru",
-                PasswordHash = "Password",
-                UserName = "Михаил"
-            });
             #endregion
             #region Disciplines
             db.Disciplines.Add(new Discipline { Id = 1, Name = "Математика", Description = "Математика - самая главная дисциплина среди всех.." });
@@ -183,24 +222,35 @@ namespace Course.WEB.Models
             #region Tasks
             db.Tasks.Add(new Entities.Task { Id = 1, PlannedComplexity = 7.7m, AverageComplexity = 9.1m,
                 PlannedTime = 300, AverageTime = 243, Answer = "κ*π/5+π/10", Name = "Задача 1.1", Condition= "tg3x=1/tg2x. Чему равен x?",
-                PeriodicityOfRequirement = 1.2m, PeriodicityOfVisiting = 4.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d"});
+                PeriodicityOfRequirement = 1.2m, PeriodicityOfVisiting = 4.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Weight = 1});
             db.Tasks.Add(new Entities.Task { Id = 2, PlannedComplexity = 2.57m, AverageComplexity = 2.1m,
                 PlannedTime = 220, AverageTime = 132, Answer = "√2/3", Name = "Задача 1.2", Condition= "Вычислить sin(-585°+α).",
-                PeriodicityOfRequirement = 5.1m, PeriodicityOfVisiting = 7.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d"});
+                PeriodicityOfRequirement = 5.1m, PeriodicityOfVisiting = 7.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Weight = 2
+            });
             db.Tasks.Add(new Entities.Task { Id = 3, PlannedComplexity = 5.2m, AverageComplexity = 2.4m,
                 PlannedTime = 140, AverageTime = 143, Answer = "nπ+(−1)^n*π6", Name = "Задача 1.3", Condition= "Решить уравнение (cosx)^2+sinx=5/4",
-                PeriodicityOfRequirement = 8.1m, PeriodicityOfVisiting = 5.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d"});
+                PeriodicityOfRequirement = 8.1m, PeriodicityOfVisiting = 5.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Weight = 4
+            });
             db.Tasks.Add(new Entities.Task { Id = 4, PlannedComplexity = 3.1m, AverageComplexity = 8.4m,
                 PlannedTime = 500, AverageTime = 243, Answer = "arctg3/2 + πn", Name = "Задача 2.1", Condition= "2 sin x – 3 cos x = 0. Чему равен x?",
-                PeriodicityOfRequirement = 2.1m, PeriodicityOfVisiting = 3.4m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d"});
+                PeriodicityOfRequirement = 2.1m, PeriodicityOfVisiting = 3.4m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Weight = 3
+            });
             db.Tasks.Add(new Entities.Task { Id = 5, PlannedComplexity = 2.95m, AverageComplexity = 5.6m,
                 PlannedTime = 195, AverageTime = 132, Answer = "√2/3", Name = "Задача 2.2", Condition= "(sinx)^2 – 3*sinx*cos x + 2(cosx)^2 = 0. Чему равен x?",
-                PeriodicityOfRequirement = 2.5m, PeriodicityOfVisiting = 9.3m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d"});
+                PeriodicityOfRequirement = 2.5m, PeriodicityOfVisiting = 9.3m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Weight = 5
+            });
             db.Tasks.Add(new Entities.Task { Id = 6, PlannedComplexity = 1.77m, AverageComplexity = 4.3m,
                 PlannedTime = 410, AverageTime = 143, Answer = "-arctg(2)+πk", Name = "Задача 2.3", Condition= "sinx + 2cosx = 0. Чему равен x?",
-                PeriodicityOfRequirement = 1.1m, PeriodicityOfVisiting = 0.2m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d"});
+                PeriodicityOfRequirement = 1.1m, PeriodicityOfVisiting = 0.2m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Weight = 7
+            });
             #endregion
-
+            
             db.SaveChanges();
         }
     }
