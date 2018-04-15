@@ -1,13 +1,47 @@
 INSERT INTO Ratings
-Values(11, 5, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.04.2018')
+VALUES(2, 6, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.05.2018')
+INSERT INTO Ratings
+VALUES(10, 1, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.04.2018')
+INSERT INTO Ratings
+VALUES(17, 2, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.01.2018')
+INSERT INTO Ratings
+VALUES(10, 2, '65c13a33-5a3e-450c-bd46-503f878e929d', 1, '03.02.2018')
+INSERT INTO Ratings
+VALUES(100, 3, '65c13a33-5a3e-450c-bd46-503f878e929d', 1, '03.01.2018')
+INSERT INTO Ratings
+VALUES(10, 3, '65c13a33-5a3e-450c-bd46-503f878e929d', 1, '03.02.2018')
+
+INSERT INTO Ratings
+VALUES(11, 1, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
+INSERT INTO Ratings
+VALUES(25, 1, '4dc66be3-90a7-4dc6-b279-6c051205b279', 1, '03.02.2018')
+INSERT INTO Ratings
+VALUES(120, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
+INSERT INTO Ratings
+VALUES(83, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
+INSERT INTO Ratings
+VALUES(111, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
+INSERT INTO Ratings
+VALUES(91, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
+
+'65c13a33-5a3e-450c-bd46-503f878e929d'
+'1a676be3-90a7-4dc6-b279-6c051205020b'
+'c13a33e3-90a7-4dc6-b279-503f878e929d'
+'4dc66be3-90a7-4dc6-b279-6c051205b279'
+
+SELECT *  FROM Tasks
+select * from Ratings
+select * from TaskStatistics
+
 
 ALTER TRIGGER UpdateTaskStatistic
 	ON Ratings
 	AFTER INSERT
 AS
 BEGIN
-	DECLARE @TaskId INT,@SolvedCount FLOAT, @SolvedCorrectCount FLOAT;
+	DECLARE @TaskId INT, @SolvedCount FLOAT, @SolvedCorrectCount FLOAT, @AverageTime INT;
 	DECLARE @PartOfCorrectAnswers FLOAT, @PartOfIncorrectAnswers FLOAT, @LogitOfTaskDifficulty FLOAT = 0;
+	DECLARE @MinLogitOfTaskDifficulty INT = -100, @MaxLogitOfTaskDifficulty INT = 100;
 	SELECT @TaskId = TaskId FROM INSERTED
 
 	IF(OBJECT_ID('tempdb..#TempTableForSolvedStat') IS NOT NULL)
@@ -27,29 +61,41 @@ BEGIN
 		  SELECT * FROM INSERTED) x
 
 	SELECT DISTINCT
-		First_Value(IsSolved) OVER (PARTITION BY StudentId, TaskId ORDER BY DateOfSolution) IsSolved
+		StudentId,
+		First_Value(IsSolved) OVER (PARTITION BY StudentId ORDER BY DateOfSolution) IsSolved,
+		First_Value(ActualTime) OVER (PARTITION BY StudentId ORDER BY DateOfSolution) ActualTime
 	INTO #TempTableForSolvedStat
 	FROM #TempTableForRating
 	WHERE TaskId = @TaskId
 
 	SELECT @SolvedCount = COUNT(IsSolved) FROM #TempTableForSolvedStat
 	SELECT @SolvedCorrectCount = COUNT(IsSolved) FROM #TempTableForSolvedStat WHERE IsSolved = 1
-	
+	SELECT @AverageTime = SUM(ActualTime)/COUNT(*) FROM #TempTableForSolvedStat
 	SET @PartOfCorrectAnswers = @SolvedCorrectCount/@SolvedCount
 	SET @PartOfIncorrectAnswers = (@SolvedCount - @SolvedCorrectCount)/@SolvedCount
-	IF (@PartOfCorrectAnswers != 0)
+
+	IF (@PartOfCorrectAnswers = 0)
 	BEGIN
-		SET @LogitOfTaskDifficulty = LOG(@PartOfIncorrectAnswers/@PartOfCorrectAnswers)
+		SET @LogitOfTaskDifficulty = @MinLogitOfTaskDifficulty;
+	END
+	ELSE IF (@PartOfInCorrectAnswers = 0)
+	BEGIN
+		SET @LogitOfTaskDifficulty = @MaxLogitOfTaskDifficulty;
+	END
+	ELSE IF(@PartOfCorrectAnswers != @PartOfIncorrectAnswers)
+	BEGIN
+		SET @LogitOfTaskDifficulty = LOG(@PartOfIncorrectAnswers/@PartOfCorrectAnswers);
 	END
 
 	SELECT @SolvedCount AS 'SolvedCount', @SolvedCorrectCount AS 'SolvedCorrectCount',
 	@PartOfCorrectAnswers AS 'PartOfCorrectAnswers', @PartOfIncorrectAnswers AS 'PartOfIncorrectAnswers',
-	@LogitOfTaskDifficulty AS 'LogitOfTaskDifficulty'
+	@LogitOfTaskDifficulty AS 'LogitOfTaskDifficulty', @AverageTime AS 'AverageTime'
 
 	IF NOT EXISTS(SELECT * FROM TaskStatistics WHERE TaskId = @TaskId)
 	BEGIN
 		INSERT INTO TaskStatistics
-		VALUES(@TaskId, @SolvedCount, @SolvedCorrectCount, @PartOfCorrectAnswers, @PartOfIncorrectAnswers, @LogitOfTaskDifficulty)
+		VALUES(@TaskId, @SolvedCount, @SolvedCorrectCount, @PartOfCorrectAnswers,
+		@PartOfIncorrectAnswers, @LogitOfTaskDifficulty, @PartOfIncorrectAnswers, @AverageTime)
 	END
 	ELSE
 	BEGIN
@@ -62,3 +108,5 @@ BEGIN
 		WHERE TaskId = @TaskId
 	END
 END
+
+

@@ -24,8 +24,6 @@ namespace Course.WEB.Models.Entities
         [Display(Name = "Планируемое время решения задачи (секунд)")]
         public int PlannedTime { get; set; }
 
-        public int AverageTime { get; set; }
-
         public decimal PeriodicityOfVisiting { get; set; }
 
         public decimal PeriodicityOfRequirement { get; set; }
@@ -61,9 +59,7 @@ namespace Course.WEB.Models.Entities
                 {"Тема", this.Topic.Name},
                 {"Условие", Convert.ToString(this.Condition)},
                 {"Планируемая сложность", Convert.ToString(this.PlannedComplexity)},
-                {"Средняя сложность", Convert.ToString(this.AverageComplexity)},
                 {"Планируемое время решения (секунд)", Convert.ToString(this.PlannedTime)},
-                {"Среднее время решения (секунд)", Convert.ToString(this.AverageTime)},
                 {"Частота востребования в курсах", Convert.ToString(this.PeriodicityOfRequirement)},
                 {"Частота посещения", Convert.ToString(this.PeriodicityOfVisiting)},
                 {"Ответ", Convert.ToString(this.Answer)},

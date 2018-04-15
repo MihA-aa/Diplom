@@ -15,5 +15,11 @@
         public decimal StandartDeviation { get; set; }
 
         public decimal CorrelationСoefficient { get; set; }
+
+        public decimal AverageComplexity { get; set; }
+        
+        public int AverageTimeForTopic { get; set; }
+
+        public int AverageTimeForTask { get; set; }
     }
 }

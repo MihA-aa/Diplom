@@ -44,7 +44,7 @@ namespace Course.WEB.Models
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
-            : base("CourseDBNew", throwIfV1Schema: false)
+            : base("EducationalCourse", throwIfV1Schema: false)
         {
             Database.SetInitializer<ApplicationDbContext>(new StoreDbInitializer());
         }
@@ -121,7 +121,6 @@ namespace Course.WEB.Models
             };
 
             db.Users.Add(mihail);
-            db.Users.Add(admin);
             db.Users.Add(user1);
             db.Users.Add(user2);
 
@@ -220,32 +219,32 @@ namespace Course.WEB.Models
                 Description = "Некоторое описание Статистическая физика"});
             #endregion
             #region Tasks
-            db.Tasks.Add(new Entities.Task { Id = 1, PlannedComplexity = 7.7m, AverageComplexity = 9.1m,
-                PlannedTime = 300, AverageTime = 243, Answer = "κ*π/5+π/10", Name = "Задача 1.1", Condition= "tg3x=1/tg2x. Чему равен x?",
+            db.Tasks.Add(new de.Task { Id = 1, PlannedComplexity = 7.7m, AverageComplexity = 9.1m,
+                PlannedTime = 300, Answer = "κ*π/5+π/10", Name = "Задача 1.1", Condition= "tg3x=1/tg2x. Чему равен x?",
                 PeriodicityOfRequirement = 1.2m, PeriodicityOfVisiting = 4.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 1});
-            db.Tasks.Add(new Entities.Task { Id = 2, PlannedComplexity = 2.57m, AverageComplexity = 2.1m,
-                PlannedTime = 220, AverageTime = 132, Answer = "√2/3", Name = "Задача 1.2", Condition= "Вычислить sin(-585°+α).",
+            db.Tasks.Add(new de.Task { Id = 2, PlannedComplexity = 2.57m, AverageComplexity = 2.1m,
+                PlannedTime = 220, Answer = "√2/3", Name = "Задача 1.2", Condition= "Вычислить sin(-585°+α).",
                 PeriodicityOfRequirement = 5.1m, PeriodicityOfVisiting = 7.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 2
             });
-            db.Tasks.Add(new Entities.Task { Id = 3, PlannedComplexity = 5.2m, AverageComplexity = 2.4m,
-                PlannedTime = 140, AverageTime = 143, Answer = "nπ+(−1)^n*π6", Name = "Задача 1.3", Condition= "Решить уравнение (cosx)^2+sinx=5/4",
+            db.Tasks.Add(new de.Task { Id = 3, PlannedComplexity = 5.2m, AverageComplexity = 2.4m,
+                PlannedTime = 140, Answer = "nπ+(−1)^n*π6", Name = "Задача 1.3", Condition= "Решить уравнение (cosx)^2+sinx=5/4",
                 PeriodicityOfRequirement = 8.1m, PeriodicityOfVisiting = 5.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 4
             });
-            db.Tasks.Add(new Entities.Task { Id = 4, PlannedComplexity = 3.1m, AverageComplexity = 8.4m,
-                PlannedTime = 500, AverageTime = 243, Answer = "arctg3/2 + πn", Name = "Задача 2.1", Condition= "2 sin x – 3 cos x = 0. Чему равен x?",
+            db.Tasks.Add(new de.Task { Id = 4, PlannedComplexity = 3.1m, AverageComplexity = 8.4m,
+                PlannedTime = 500, Answer = "arctg3/2 + πn", Name = "Задача 2.1", Condition= "2 sin x – 3 cos x = 0. Чему равен x?",
                 PeriodicityOfRequirement = 2.1m, PeriodicityOfVisiting = 3.4m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 3
             });
-            db.Tasks.Add(new Entities.Task { Id = 5, PlannedComplexity = 2.95m, AverageComplexity = 5.6m,
-                PlannedTime = 195, AverageTime = 132, Answer = "√2/3", Name = "Задача 2.2", Condition= "(sinx)^2 – 3*sinx*cos x + 2(cosx)^2 = 0. Чему равен x?",
+            db.Tasks.Add(new de.Task { Id = 5, PlannedComplexity = 2.95m, AverageComplexity = 5.6m,
+                PlannedTime = 195, Answer = "√2/3", Name = "Задача 2.2", Condition= "(sinx)^2 – 3*sinx*cos x + 2(cosx)^2 = 0. Чему равен x?",
                 PeriodicityOfRequirement = 2.5m, PeriodicityOfVisiting = 9.3m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 5
             });
-            db.Tasks.Add(new Entities.Task { Id = 6, PlannedComplexity = 1.77m, AverageComplexity = 4.3m,
-                PlannedTime = 410, AverageTime = 143, Answer = "-arctg(2)+πk", Name = "Задача 2.3", Condition= "sinx + 2cosx = 0. Чему равен x?",
+            db.Tasks.Add(new de.Task { Id = 6, PlannedComplexity = 1.77m, AverageComplexity = 4.3m,
+                PlannedTime = 410, Answer = "-arctg(2)+πk", Name = "Задача 2.3", Condition= "sinx + 2cosx = 0. Чему равен x?",
                 PeriodicityOfRequirement = 1.1m, PeriodicityOfVisiting = 0.2m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 7
             });

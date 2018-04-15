@@ -15,5 +15,9 @@
         public decimal PartOfIncorrectAnswers { get; set; }
 
         public decimal LogitOfTaskDifficulty { get; set; }
+
+        public decimal Complexity { get; set; }
+
+        public int AverageTime { get; set; }
     }
 }
