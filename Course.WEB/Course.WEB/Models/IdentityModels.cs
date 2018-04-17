@@ -188,34 +188,43 @@ namespace Course.WEB.Models
             Description = "Этот курс предназначен для тренировки решения задач по теме Модульное тестирование"});
             #endregion
             #region Topics
-            db.Topics.Add(new Topic { Id = 1, Name = "Метод вспомогательного аргумента", AverageComplexity = 6.1m,
-                CourseId = 1, PeriodicityOfDemand = 2.1m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d", Description = "На уроках алгебры учителя рассказывают, "+
+            db.Topics.Add(new Topic { Id = 1, Name = "Метод вспомогательного аргумента",
+                PlannedComplexity = 0.1m,
+                CourseId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d", Description = "На уроках алгебры учителя рассказывают, "+
                 "что существует небольшой (на самом деле — очень даже большой) класс тригонометрических уравнений, "+
                 "которые не решаются стандартными способами — ни через разложение на множители, ни через замену переменной,"+
                 "ни даже через однородные слагаемые. В этом случае в дело вступает принципиально другой подход — метод вспомогательного угла."});
-            db.Topics.Add(new Topic { Id = 2, Name = "Тригонометрические уравнения", AverageComplexity = 8.3m,
-                CourseId = 1, PeriodicityOfDemand = 1.8m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d" ,
+            db.Topics.Add(new Topic { Id = 2, Name = "Тригонометрические уравнения",
+                PlannedComplexity = 0.3m,
+                CourseId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d" ,
                 Description = "Некоторое описание Тригонометрические уравнения"});
-            db.Topics.Add(new Topic { Id = 3, Name = "Однородные уравнения", AverageComplexity = 7.234m,
-                CourseId = 1, PeriodicityOfDemand = 2.0m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+            db.Topics.Add(new Topic { Id = 3, Name = "Однородные уравнения",
+                PlannedComplexity = 0.234m,
+                CourseId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Однородные уравнения"});
-            db.Topics.Add(new Topic { Id = 4, Name = "Дифференциальные уравнения", AverageComplexity = 6.1m,
-                CourseId = 2, PeriodicityOfDemand = 6.5m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+            db.Topics.Add(new Topic { Id = 4, Name = "Дифференциальные уравнения",
+                PlannedComplexity = 0.6m,
+                CourseId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Дифференциальные уравнения"});
-            db.Topics.Add(new Topic { Id = 5, Name = "Интегралы", AverageComplexity = 8.3m,
-                CourseId = 2, PeriodicityOfDemand = 3.8m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+            db.Topics.Add(new Topic { Id = 5, Name = "Интегралы",
+                PlannedComplexity = 0.8m,
+                CourseId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Интегралы"});
-            db.Topics.Add(new Topic { Id = 6, Name = "Комплексные числа", AverageComplexity = 9.1m,
-                CourseId = 2, PeriodicityOfDemand = 3.1m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+            db.Topics.Add(new Topic { Id = 6, Name = "Комплексные числа",
+                PlannedComplexity = 0.9m,
+                CourseId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Комплексные числа"});
-            db.Topics.Add(new Topic { Id = 7, Name = "Электромагнетизм", AverageComplexity = 6.1m,
-                CourseId = 4, PeriodicityOfDemand = 6.5m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+            db.Topics.Add(new Topic { Id = 7, Name = "Электромагнетизм",
+                PlannedComplexity = 0.7m,
+                CourseId = 4, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Электромагнетизм"});
-            db.Topics.Add(new Topic { Id = 8, Name = "Термодинамика", AverageComplexity = 8.3m,
-                CourseId = 4, PeriodicityOfDemand = 3.8m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+            db.Topics.Add(new Topic { Id = 8, Name = "Термодинамика",
+                PlannedComplexity = 0.8m,
+                CourseId = 4, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Термодинамика"});
-            db.Topics.Add(new Topic { Id = 9, Name = "Статистическая физика", AverageComplexity = 9.1m,
-                CourseId = 4, PeriodicityOfDemand = 3.1m, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
+            db.Topics.Add(new Topic { Id = 9, Name = "Статистическая физика",
+                PlannedComplexity = 0.9m,
+                CourseId = 4, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Статистическая физика"});
             #endregion
             #region Tasks

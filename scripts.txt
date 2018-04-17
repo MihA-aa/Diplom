@@ -1,41 +1,5 @@
-INSERT INTO Ratings
-VALUES(2, 6, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.05.2018')
-INSERT INTO Ratings
-VALUES(10, 1, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.04.2018')
-INSERT INTO Ratings
-VALUES(17, 2, '65c13a33-5a3e-450c-bd46-503f878e929d', 0, '03.01.2018')
-INSERT INTO Ratings
-VALUES(10, 2, '65c13a33-5a3e-450c-bd46-503f878e929d', 1, '03.02.2018')
-INSERT INTO Ratings
-VALUES(100, 3, '65c13a33-5a3e-450c-bd46-503f878e929d', 1, '03.01.2018')
-INSERT INTO Ratings
-VALUES(10, 3, '65c13a33-5a3e-450c-bd46-503f878e929d', 1, '03.02.2018')
-
-INSERT INTO Ratings
-VALUES(11, 1, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
-INSERT INTO Ratings
-VALUES(25, 1, '4dc66be3-90a7-4dc6-b279-6c051205b279', 1, '03.02.2018')
-INSERT INTO Ratings
-VALUES(120, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
-INSERT INTO Ratings
-VALUES(83, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
-INSERT INTO Ratings
-VALUES(111, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
-INSERT INTO Ratings
-VALUES(91, 5, '1a676be3-90a7-4dc6-b279-6c051205020b', 0, '03.03.2018')
-
-'65c13a33-5a3e-450c-bd46-503f878e929d'
-'1a676be3-90a7-4dc6-b279-6c051205020b'
-'c13a33e3-90a7-4dc6-b279-503f878e929d'
-'4dc66be3-90a7-4dc6-b279-6c051205b279'
-
-SELECT *  FROM Tasks
-select * from Ratings
-select * from TaskStatistics
-
-
-ALTER TRIGGER UpdateTaskStatistic
-	ON Ratings
+CREATE TRIGGER [dbo].[UpdateTaskStatistic]
+	ON [dbo].[Ratings]
 	AFTER INSERT
 AS
 BEGIN
@@ -104,9 +68,148 @@ BEGIN
 		SolvedCorrectCount = @SolvedCorrectCount,
 		PartOfCorrectAnswers = @PartOfCorrectAnswers,
 		PartOfIncorrectAnswers = @PartOfIncorrectAnswers,
-		LogitOfTaskDifficulty = @LogitOfTaskDifficulty
+		LogitOfTaskDifficulty = @LogitOfTaskDifficulty,
+		Complexity = @PartOfIncorrectAnswers,
+		AverageTime = @AverageTime
 		WHERE TaskId = @TaskId
 	END
-END
 
+	DECLARE @OverallAcademicPerformance FLOAT, @Variation FLOAT, @Dispersion FLOAT, @StandartDeviation FLOAT;
+	DECLARE @AverageComplexityForTopic FLOAT, @AverageTimeForTopic INT, @AverageTimeForTask INT, @CountOfStudent INT;
+	DECLARE @TopicId INT, @HighestPossibleScore FLOAT, @HighestScore FLOAT;
+	SELECT @TopicId = TopicId FROM Tasks WHERE Id = @TaskId;
+
+	IF(OBJECT_ID('tempdb..#TempTableForTopicStat') IS NOT NULL)
+	BEGIN
+		DROP TABLE #TempTableForTopicStat
+	END
+
+	SELECT DISTINCT
+		TaskId,
+		StudentId,
+		First_Value(IsSolved) OVER (PARTITION BY StudentId, TaskId ORDER BY DateOfSolution) IsSolved,
+		First_Value(ActualTime) OVER (PARTITION BY StudentId, TaskId ORDER BY DateOfSolution) ActualTime,
+		Weight
+	INTO #TempTableForTopicStat
+	FROM #TempTableForRating r
+	LEFT JOIN Tasks t
+	ON t.Id = r.TaskId
+	WHERE t.TopicId = @TopicId
+	
+	SELECT @CountOfStudent = COUNT(tt.StudentId) FROM (SELECT DISTINCT StudentId FROM #TempTableForTopicStat) tt
+	SELECT @OverallAcademicPerformance  = CAST(SUM([Weight]) AS FLOAT)/CAST(@CountOfStudent AS FLOAT) 
+	FROM #TempTableForTopicStat
+	WHERE IsSolved = 1
+
+	IF (@OverallAcademicPerformance IS NULL )
+	BEGIN
+		SET @OverallAcademicPerformance = 0;
+	END
+
+	SELECT @Variation = SUM(sq.Square) FROM
+	(SELECT SQUARE(CAST(SUM(CASE WHEN IsSolved != 0 THEN Weight ELSE 0 END) AS FLOAT) - @OverallAcademicPerformance) Square
+	FROM #TempTableForTopicStat
+	GROUP BY StudentId) sq
+
+	IF (@CountOfStudent = 1)
+	BEGIN
+		SELECT @Dispersion = @Variation;
+		SELECT @StandartDeviation = SQRT(@Variation);
+	END
+	ELSE
+	BEGIN
+		SELECT @Dispersion = @Variation/(@CountOfStudent - 1);
+		SELECT @StandartDeviation = SQRT(@Variation/(@CountOfStudent - 1));
+	END
+
+	SELECT @AverageComplexityForTopic = SUM(Complexity)/COUNT(ts.TaskId),
+	@AverageTimeForTask = SUM(AverageTime)/COUNT(ts.TaskId),
+	@AverageTimeForTopic = SUM(AverageTime),
+	@HighestPossibleScore = SUM(t.Weight)
+	FROM TaskStatistics ts, Tasks t
+	WHERE ts.TaskId = t.Id and ts.TaskId IN (SELECT TaskId FROM #TempTableForTopicStat)
+
+	SELECT @HighestScore = MAX(sums.SumOfScore)
+	FROM (SELECT SUM(CASE WHEN IsSolved != 0 THEN Weight ELSE 0 END) SumOfScore
+	FROM #TempTableForTopicStat
+	GROUP BY StudentId) sums
+
+	SELECT @CountOfStudent AS 'CountOfStudent', @OverallAcademicPerformance AS 'OverallAcademicPerformance',
+	@Variation AS 'Variation', @Dispersion AS 'Dispersion',
+	@StandartDeviation AS 'StandartDeviation', @AverageComplexityForTopic AS 'AverageComplexityForTopic',
+	@AverageTimeForTask AS 'AverageTimeForTask', @AverageTimeForTopic AS 'AverageTimeForTopic',
+	@HighestPossibleScore AS 'HighestPossibleScore', @HighestScore AS 'HighestScore'
+
+	IF NOT EXISTS(SELECT * FROM TopicStatistics WHERE TopicId = @TopicId)
+	BEGIN
+		INSERT INTO TopicStatistics
+		VALUES(@TopicId, @OverallAcademicPerformance, @Variation, @Dispersion, @StandartDeviation,
+		@AverageComplexityForTopic, @AverageTimeForTopic, @AverageTimeForTask, 0, @HighestPossibleScore, @HighestScore)
+	END
+	ELSE
+	BEGIN
+		UPDATE TopicStatistics
+		SET OverallAcademicPerformance = @OverallAcademicPerformance,
+		Dispersion = 1,
+		StandartDeviation = @StandartDeviation,
+		AverageComplexity = @AverageComplexityForTopic,
+		AverageTimeForTopic = @AverageTimeForTopic,
+		AverageTimeForTask = @AverageTimeForTask,
+		HighestPossibleScore = @HighestPossibleScore,
+		HighestScore = @HighestScore
+		WHERE TopicId = @TopicId
+	END
+
+	DECLARE @StudentId nvarchar(128), @SolvedTasksCount FLOAT, @SolvedCorrectTasksCount FLOAT;
+	DECLARE @PartOfCorrectStudentAnswers FLOAT, @PartOfIncorrectStudentAnswers FLOAT, @LogitOfLevelKnowledge FLOAT = 0;
+	SELECT @StudentId = StudentId FROM INSERTED;
+
+	IF(OBJECT_ID('tempdb..#TempTableForStudentStat') IS NOT NULL)
+	BEGIN
+		DROP TABLE #TempTableForStudentStat
+	END
+
+	SELECT DISTINCT
+		TaskId,
+		First_Value(IsSolved) OVER (PARTITION BY TaskId ORDER BY DateOfSolution) IsSolved
+	INTO #TempTableForStudentStat
+	FROM #TempTableForRating
+	WHERE StudentId = @StudentId
+
+	SELECT @SolvedTasksCount = COUNT(IsSolved) FROM #TempTableForStudentStat
+	SELECT @SolvedCorrectTasksCount = COUNT(IsSolved) FROM #TempTableForStudentStat WHERE IsSolved = 1
+	SET @PartOfCorrectStudentAnswers = @SolvedCorrectTasksCount/@SolvedTasksCount
+	SET @PartOfIncorrectStudentAnswers = (@SolvedTasksCount - @SolvedCorrectTasksCount)/@SolvedTasksCount
+
+	IF (@PartOfCorrectStudentAnswers = 0)
+	BEGIN
+		SET @LogitOfLevelKnowledge = @MinLogitOfTaskDifficulty;
+	END
+	ELSE IF (@PartOfIncorrectStudentAnswers = 0)
+	BEGIN
+		SET @LogitOfLevelKnowledge = @MaxLogitOfTaskDifficulty;
+	END
+	ELSE IF(@PartOfCorrectStudentAnswers != @PartOfIncorrectStudentAnswers)
+	BEGIN
+		SET @LogitOfLevelKnowledge = LOG(@PartOfIncorrectStudentAnswers/@PartOfCorrectStudentAnswers);
+	END
+
+	SELECT @SolvedTasksCount AS 'SolvedTasksCount', @SolvedCorrectTasksCount AS 'SolvedCorrectTasksCount',
+	@PartOfCorrectStudentAnswers AS 'PartOfCorrectStudentAnswers', @PartOfInCorrectStudentAnswers AS 'PartOfInCorrectStudentAnswers',
+	@LogitOfLevelKnowledge AS 'LogitOfLevelKnowledge'
+
+	IF NOT EXISTS(SELECT * FROM StudentStatistics WHERE StudentId = @StudentId)
+	BEGIN
+		INSERT INTO StudentStatistics
+		VALUES(@StudentId, @PartOfCorrectStudentAnswers, @PartOfIncorrectStudentAnswers, @LogitOfLevelKnowledge)
+	END
+	ELSE
+	BEGIN
+		UPDATE StudentStatistics
+		SET PartOfCorrectAnswers = @PartOfCorrectStudentAnswers,
+		PartOfInCorrectAnswers = @PartOfIncorrectStudentAnswers,
+		LogitOfLevelKnowledge = @LogitOfLevelKnowledge
+		WHERE StudentId = @StudentId
+	END
+END
 

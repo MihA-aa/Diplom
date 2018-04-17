@@ -19,11 +19,9 @@ namespace Course.WEB.Models.Entities
         [Display(Name = "Описание темы")]
         public string Description { get; set; }
 
-        public decimal PeriodicityOfDemand { get; set; }
-
         [Range(typeof(decimal), "0", "10", ErrorMessage = "Значение должно быть в пределе от {1} до {2}.")]
         [Display(Name = "Планируемая сложность темы")]
-        public decimal AverageComplexity { get; set; }
+        public decimal PlannedComplexity { get; set; }
 
         public int CourseId { get; set; }
 
@@ -45,7 +43,7 @@ namespace Course.WEB.Models.Entities
             Dictionary<string, string> DictProperties = new Dictionary<string, string>
             {
                 {"Название", this.Name},
-                {"Средняя сложность", Convert.ToString(this.AverageComplexity)},
+                {"Средняя сложность", Convert.ToString(this.PlannedComplexity)},
                 {"Курс", this.Course.Name}
             };
             return DictProperties;
