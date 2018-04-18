@@ -27,11 +27,9 @@ namespace Course.WEB.Models.Entities
         public string CreatorId { get; set; }
 
         public virtual ApplicationUser Creator { get; set; }
-
-        //public virtual ICollection<ClientProfile> Students { get; set; }
+        
         public Course()
         {
-            //Students = new List<ClientProfile>();
             Topics = new List<Topic>();
         }
 
@@ -42,11 +40,6 @@ namespace Course.WEB.Models.Entities
                 {"Название", this.Name},
                 {"Дисциплина", this.Discipline.Name}
             };
-            //PropertyInfo[] properties = typeof(Course).GetProperties();
-            //foreach (PropertyInfo property in properties)
-            //{
-            //    DictProperties.Add(property.Name, Convert.ToString(property.GetValue(this, null)));
-            //}
             
             return DictProperties;
         }

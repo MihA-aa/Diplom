@@ -74,6 +74,20 @@ namespace Course.WEB.Models
     {
         protected override void Seed(ApplicationDbContext db)
         {
+
+            #region Roles
+            var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
+            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
+            
+            var superAdminRole = new IdentityRole { Name = "superAdmin" };
+            var adminRole = new IdentityRole { Name = "admin" };
+            var userRole = new IdentityRole { Name = "user" };
+            
+            roleManager.Create(superAdminRole);
+            roleManager.Create(adminRole);
+            roleManager.Create(userRole);
+
+            #endregion
             #region Users
 
             var mihail = new ApplicationUser
@@ -82,69 +96,43 @@ namespace Course.WEB.Models
                 LastName = "Ермолаев",
                 FirstName = "Михаил",
                 MiddleName = "Сергеевич",
-                Email = "AMihA_aa@mail.ru",
-                PasswordHash = "Password",
-                UserName = "Михаил"
+                Email = "Miha_aa@mail.ru",
+                UserName = "Mihail"
+            };
+
+            var superAdmin = new ApplicationUser
+            {
+                Id = "c13a33e3-90a7-4dc6-b279-503f878e929d",
+                LastName = "Админович",
+                FirstName = "CуперАдмин",
+                Email = "SuperAdmin@mail.ru",
+                UserName = "superAdmin"
             };
 
             var admin = new ApplicationUser
             {
                 Id = "1a676be3-90a7-4dc6-b279-6c051205020b",
-                LastName = "User",
-                FirstName = "Some",
-                MiddleName = "Сергеевич",
-                Email = "somemail@mail.ru",
-                PasswordHash = "Password",
-                UserName = "Mihail"
+                LastName = "Админович",
+                FirstName = "Админ",
+                Email = "Admin@mail.ru",
+                UserName = "Admin"
             };
 
-            var user1 = new ApplicationUser
-            {
-                Id = "c13a33e3-90a7-4dc6-b279-503f878e929d",
-                LastName = "User1",
-                FirstName = "User1",
-                MiddleName = "User1",
-                Email = "User1@mail.ru",
-                PasswordHash = "Password",
-                UserName = "User1"
-            };
-            
-            var user2 = new ApplicationUser
+            var user = new ApplicationUser
             {
                 Id = "4dc66be3-90a7-4dc6-b279-6c051205b279",
-                LastName = "User2",
-                FirstName = "User2",
-                MiddleName = "User2",
-                Email = "User2@mail.ru",
-                PasswordHash = "Password",
-                UserName = "User2"
+                LastName = "User",
+                FirstName = "User",
+                MiddleName = "User",
+                Email = "User@mail.ru",
+                UserName = "User"
             };
+            
+            CreateUser(userManager, mihail, superAdminRole.Name);
+            CreateUser(userManager, superAdmin, superAdminRole.Name);
+            CreateUser(userManager, admin, adminRole.Name);
+            CreateUser(userManager, user, userRole.Name);
 
-            db.Users.Add(mihail);
-            db.Users.Add(user1);
-            db.Users.Add(user2);
-
-            #endregion
-            #region Create role
-            var userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
-            var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(db));
-            
-            var role0 = new IdentityRole { Name = "superAdmin" };
-            var role1 = new IdentityRole { Name = "admin" };
-            var role2 = new IdentityRole { Name = "user" };
-            
-            roleManager.Create(role0);
-            roleManager.Create(role1);
-            roleManager.Create(role2);
-            
-            string password = "ad46D_ewr3";
-            var result = userManager.Create(admin, password);
-            
-            if (result.Succeeded)
-            {
-                userManager.AddToRole(admin.Id, role1.Name);
-                userManager.AddToRole(admin.Id, role2.Name);
-            }
             #endregion
             #region Disciplines
             db.Disciplines.Add(new Discipline { Id = 1, Name = "Математика", Description = "Математика - самая главная дисциплина среди всех.." });
@@ -228,31 +216,31 @@ namespace Course.WEB.Models
                 Description = "Некоторое описание Статистическая физика"});
             #endregion
             #region Tasks
-            db.Tasks.Add(new de.Task { Id = 1, PlannedComplexity = 7.7m, AverageComplexity = 9.1m,
+            db.Tasks.Add(new de.Task { Id = 1, PlannedComplexity = 7.7m,
                 PlannedTime = 300, Answer = "κ*π/5+π/10", Name = "Задача 1.1", Condition= "tg3x=1/tg2x. Чему равен x?",
                 PeriodicityOfRequirement = 1.2m, PeriodicityOfVisiting = 4.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 1});
-            db.Tasks.Add(new de.Task { Id = 2, PlannedComplexity = 2.57m, AverageComplexity = 2.1m,
+            db.Tasks.Add(new de.Task { Id = 2, PlannedComplexity = 2.57m,
                 PlannedTime = 220, Answer = "√2/3", Name = "Задача 1.2", Condition= "Вычислить sin(-585°+α).",
                 PeriodicityOfRequirement = 5.1m, PeriodicityOfVisiting = 7.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 2
             });
-            db.Tasks.Add(new de.Task { Id = 3, PlannedComplexity = 5.2m, AverageComplexity = 2.4m,
+            db.Tasks.Add(new de.Task { Id = 3, PlannedComplexity = 5.2m,
                 PlannedTime = 140, Answer = "nπ+(−1)^n*π6", Name = "Задача 1.3", Condition= "Решить уравнение (cosx)^2+sinx=5/4",
                 PeriodicityOfRequirement = 8.1m, PeriodicityOfVisiting = 5.1m, TopicId = 1, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 4
             });
-            db.Tasks.Add(new de.Task { Id = 4, PlannedComplexity = 3.1m, AverageComplexity = 8.4m,
+            db.Tasks.Add(new de.Task { Id = 4, PlannedComplexity = 3.1m,
                 PlannedTime = 500, Answer = "arctg3/2 + πn", Name = "Задача 2.1", Condition= "2 sin x – 3 cos x = 0. Чему равен x?",
                 PeriodicityOfRequirement = 2.1m, PeriodicityOfVisiting = 3.4m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 3
             });
-            db.Tasks.Add(new de.Task { Id = 5, PlannedComplexity = 2.95m, AverageComplexity = 5.6m,
+            db.Tasks.Add(new de.Task { Id = 5, PlannedComplexity = 2.95m,
                 PlannedTime = 195, Answer = "√2/3", Name = "Задача 2.2", Condition= "(sinx)^2 – 3*sinx*cos x + 2(cosx)^2 = 0. Чему равен x?",
                 PeriodicityOfRequirement = 2.5m, PeriodicityOfVisiting = 9.3m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 5
             });
-            db.Tasks.Add(new de.Task { Id = 6, PlannedComplexity = 1.77m, AverageComplexity = 4.3m,
+            db.Tasks.Add(new de.Task { Id = 6, PlannedComplexity = 1.77m,
                 PlannedTime = 410, Answer = "-arctg(2)+πk", Name = "Задача 2.3", Condition= "sinx + 2cosx = 0. Чему равен x?",
                 PeriodicityOfRequirement = 1.1m, PeriodicityOfVisiting = 0.2m, TopicId = 2, CreatorId= "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Weight = 7
@@ -260,6 +248,17 @@ namespace Course.WEB.Models
             #endregion
             
             db.SaveChanges();
+        }
+
+        private void CreateUser(ApplicationUserManager userManager, ApplicationUser user, string roleName)
+        {
+            string password = "Password";
+            var result = userManager.Create(user, password);
+
+            if (result.Succeeded)
+            {
+                userManager.AddToRole(user.Id, roleName);
+            }
         }
     }
 }

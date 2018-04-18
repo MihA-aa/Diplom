@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Course.WEB.Helpers
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -21,8 +22,9 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    @if (User.IsInRole("admin") || User.IsInRole("superAdmin")){
-                    <li>@Html.ActionLink("Создать дисциплину", "CreateDiscipline", "Home")</li>
+                    @if (User.HasPermissionToCreate())
+                    {
+                    <li>@Html.ActionLink("Создать дисциплину", "Create", "Discipline")</li>
                     }
                     @if (User.IsInRole("superAdmin"))
                     {
@@ -34,11 +36,11 @@
         </div>
     </div>
     <div class="container body-content">
-        @if ((string)TempData["resolve"] == "True")
+        @if ((bool?)TempData["resolve"] == true)
         {
             <div class="alert alert-success">@TempData["message"].ToString()</div>
         }
-        else if ((string)TempData["resolve"] == "False")
+        else if ((bool?)TempData["resolve"] == false)
         {
             <div class="alert alert-danger">@TempData["message"].ToString()</div>
         }

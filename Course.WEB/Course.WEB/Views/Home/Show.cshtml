@@ -21,7 +21,7 @@
             {
                 if (c.Key == "Название" && course.First().Key == "Id")
                 {
-                    <td>@Html.ActionLink(c.Value, "SolveTask", "Home", new { taskId = course.First().Value }, null)</td>
+                    <td>@Html.ActionLink(c.Value, "Solve", "Task", new { taskId = course.First().Value }, null)</td>
                 }
                 else
                 {

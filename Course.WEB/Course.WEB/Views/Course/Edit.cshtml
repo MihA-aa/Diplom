@@ -7,7 +7,7 @@
 <h2>@ViewBag.Title</h2>
 
 <div id="infaCreate">
-    @using (Html.BeginForm("RedactCourse", "Home", FormMethod.Post, new { style = "" }))
+    @using (Html.BeginForm("Edit", "Course", FormMethod.Post, new { style = "" }))
             {
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Id)
@@ -33,7 +33,7 @@
             </button>
             <button type="button" class="btn btn-default btn-mine">
                 <span class="fi-x" style="font-size: 18px;">
-                    @Html.ActionLink("Отмена", "ShowDiscipline", "Home", new { disciplineId = Model.DisciplineId }, new
+                    @Html.ActionLink("Отмена", "Get", "Discipline", new { disciplineId = Model.DisciplineId }, new
                {
                    style = "color: #333333; text-decoration: none; "
                })

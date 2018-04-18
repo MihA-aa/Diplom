@@ -1,6 +1,5 @@
 ﻿@model Course.WEB.Models.Entities.Discipline
-@using Microsoft.AspNet.Identity
-
+@using Course.WEB.Helpers
 @{
     ViewBag.Title = Model.Name;
 }
@@ -35,7 +34,7 @@ else
 <div>
     @for (int i = 0; i < Model.Courses.Count(); i++)
     {
-        <a href="@Url.Action("ShowCourse", "Home", new { courseId = Model.Courses.ToList()[i].Id }, null)"
+        <a href="@Url.Action("Get", "Course", new { courseId = Model.Courses.ToList()[i].Id }, null)"
            style="text-decoration: none;">
             <div class="item transition">
                 <h4 style="font-size: 15px; padding: 8px;">
@@ -43,10 +42,10 @@ else
                 </h4>
             </div>
         </a>
-        if (Model.Courses.ToList()[i].Creator.Id == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
+        if (User.HasPermissionToRedact(Model.Courses.ToList()[i].Creator.Id))
         {
             <div style="right: 235px; position: absolute; margin-top: -40px;">
-            @using (Html.BeginForm("RedactCourse", "Home", FormMethod.Get, new
+            @using (Html.BeginForm("Edit", "Course", FormMethod.Get, new
             {
                 style = "display: inline-block; margin-right: 5px;"
             }))
@@ -58,7 +57,7 @@ else
                           style="font-size: 20px;"></span>
                 </button>
             }
-            @using (Html.BeginForm("DeleteCourse", "Home", new { courseId = Model.Courses.ToList()[i].Id }, FormMethod.Post, new
+            @using (Html.BeginForm("Delete", "Course", new { courseId = Model.Courses.ToList()[i].Id }, FormMethod.Post, new
             {
                 style = "display: inline-block;"
             }))
@@ -74,9 +73,9 @@ else
     }
 </div>
 }
-@if (User.IsInRole("admin") || User.IsInRole("superAdmin"))
+@if (User.HasPermissionToCreate())
 {
-    using (Html.BeginForm("CreateCourse", "Home", FormMethod.Get, new
+    using (Html.BeginForm("Create", "Course", FormMethod.Get, new
     {
         style = "display: inline-block; margin-left: 10px;"
     }))

@@ -5,12 +5,12 @@
 
 <h2>@Model.Name</h2>
 <script language="JavaScript" type="text/javascript">
-//объявляем переменные
+
 var base = 60;
 var clocktimer,dateObj,dh,dm,ds,ms;
 var readout='';
-var h=1,m=1,tm=1,s=0,ts=0,ms=0,init=0;
-//функция для очистки поля
+var h = 1, m = 1, tm = 1, s = 0, ts = 0, ms = 0, init = 0;
+
 function ClearСlock() {
 	clearTimeout(clocktimer);
 	h=1;m=1;tm=1;s=0;ts=0;ms=0;
@@ -18,7 +18,7 @@ function ClearСlock() {
 	readout='00:00:00.00';
 	document.MyForm.time.value=readout;
 }
-//функция для старта секундомера
+
 function StartTIME() {
 	var cdateObj = new Date();
 	var t = (cdateObj.getTime() - dateObj.getTime())-(s*1000);
@@ -50,7 +50,7 @@ function StartTIME() {
 	document.MyForm.time.value = readout;
 	clocktimer = setTimeout("StartTIME()",1);
 }
-//Функция запуска и остановки
+
 function StartStop() {
 	if (init==0){
 		ClearСlock();
@@ -67,7 +67,7 @@ window.onload = function() {
 };
 </script>
 <div id="infaCreate">
-    @using (Html.BeginForm("SolveTask", "Home", FormMethod.Post, new { style = "", name = "MyForm" }))
+    @using (Html.BeginForm("Solve", "Task", FormMethod.Post, new { style = "", name = "MyForm" }))
     {
         <input name=time size=10 value="00:00:00.00">
         @Html.HiddenFor(model => model.Id)
@@ -88,7 +88,7 @@ window.onload = function() {
                     <span class="fi-save" style="font-size: 18px;"> Ответить </span>
                 </button>
                 <a class="btn btn-default myBtn" style="font-size: 18px;"
-                   href="@Url.Action("Show", "Home", new { item = "Tasks"}, null)"> Назад </a>
+                   href="@Url.Action("Get", "Topic", new { topicId = Model.TopicId}, null)"> Назад </a>
             </div>
     }
 </div>

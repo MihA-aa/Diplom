@@ -1,24 +1,22 @@
-﻿@model Course.WEB.Models.Entities.Course
+﻿@model Course.WEB.Models.Entities.Discipline
 @using Microsoft.AspNet.Identity
 @{
-    ViewBag.Title = "Создание курса для дисциплины - " + ViewBag.Discipline;
+    ViewBag.Title = "Создание дисциплины";
 }
 
 <h2>@ViewBag.Title</h2>
 
-
 <div id="infaCreate">
-    @using (Html.BeginForm("CreateCourse", "Home", FormMethod.Post, new { style = "" }))
+    @using (Html.BeginForm("Create", "Discipline", FormMethod.Post, new { style = "" }))
             {
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Id)
         @Html.Hidden("CreatorId", User.Identity.GetUserId())
-        <input name="DisciplineId" type="hidden" value="@ViewBag.DisciplineId">
         <div class="form-group">
             @Html.LabelFor(model => model.Name)
             @Html.EditorFor(model => model.Name, new
        {
-           htmlAttributes = new { @class = "form-control", placeholder = "Курс..." },
+           htmlAttributes = new { @class = "form-control", placeholder = "Дисциплина 21" },
        })
             @Html.ValidationMessageFor(model => model.Name)
         </div>
@@ -34,7 +32,7 @@
             </button>
             <button type="button" class="btn btn-default btn-mine">
                 <span class="fi-x" style="font-size: 18px;">
-                    @Html.ActionLink("Отмена", "ShowDiscipline", "Home", new { disciplineId = ViewBag.DisciplineId }, new
+                    @Html.ActionLink("Отмена", "Index", "Home",  new
                    {
                        style = "color: #333333; text-decoration: none; "
                    })

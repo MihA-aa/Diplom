@@ -19,7 +19,7 @@ namespace Course.WEB.Models.Entities
         [Display(Name = "Описание темы")]
         public string Description { get; set; }
 
-        [Range(typeof(decimal), "0", "10", ErrorMessage = "Значение должно быть в пределе от {1} до {2}.")]
+        [Range(typeof(decimal), "0", "1", ErrorMessage = "Значение должно быть в пределе от {1} до {2}.")]
         [Display(Name = "Планируемая сложность темы")]
         public decimal PlannedComplexity { get; set; }
 

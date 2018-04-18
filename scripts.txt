@@ -51,9 +51,9 @@ BEGIN
 		SET @LogitOfTaskDifficulty = LOG(@PartOfIncorrectAnswers/@PartOfCorrectAnswers);
 	END
 
-	SELECT @SolvedCount AS 'SolvedCount', @SolvedCorrectCount AS 'SolvedCorrectCount',
-	@PartOfCorrectAnswers AS 'PartOfCorrectAnswers', @PartOfIncorrectAnswers AS 'PartOfIncorrectAnswers',
-	@LogitOfTaskDifficulty AS 'LogitOfTaskDifficulty', @AverageTime AS 'AverageTime'
+	--SELECT @SolvedCount AS 'SolvedCount', @SolvedCorrectCount AS 'SolvedCorrectCount',
+	--@PartOfCorrectAnswers AS 'PartOfCorrectAnswers', @PartOfIncorrectAnswers AS 'PartOfIncorrectAnswers',
+	--@LogitOfTaskDifficulty AS 'LogitOfTaskDifficulty', @AverageTime AS 'AverageTime'
 
 	IF NOT EXISTS(SELECT * FROM TaskStatistics WHERE TaskId = @TaskId)
 	BEGIN
@@ -124,21 +124,21 @@ BEGIN
 
 	SELECT @AverageComplexityForTopic = SUM(Complexity)/COUNT(ts.TaskId),
 	@AverageTimeForTask = SUM(AverageTime)/COUNT(ts.TaskId),
-	@AverageTimeForTopic = SUM(AverageTime),
-	@HighestPossibleScore = SUM(t.Weight)
+	@AverageTimeForTopic = SUM(AverageTime)
 	FROM TaskStatistics ts, Tasks t
 	WHERE ts.TaskId = t.Id and ts.TaskId IN (SELECT TaskId FROM #TempTableForTopicStat)
 
+	SELECT @HighestPossibleScore = SUM(Weight) FROM Tasks WHERE TopicId = @TopicId
 	SELECT @HighestScore = MAX(sums.SumOfScore)
 	FROM (SELECT SUM(CASE WHEN IsSolved != 0 THEN Weight ELSE 0 END) SumOfScore
 	FROM #TempTableForTopicStat
 	GROUP BY StudentId) sums
 
-	SELECT @CountOfStudent AS 'CountOfStudent', @OverallAcademicPerformance AS 'OverallAcademicPerformance',
-	@Variation AS 'Variation', @Dispersion AS 'Dispersion',
-	@StandartDeviation AS 'StandartDeviation', @AverageComplexityForTopic AS 'AverageComplexityForTopic',
-	@AverageTimeForTask AS 'AverageTimeForTask', @AverageTimeForTopic AS 'AverageTimeForTopic',
-	@HighestPossibleScore AS 'HighestPossibleScore', @HighestScore AS 'HighestScore'
+	--SELECT @CountOfStudent AS 'CountOfStudent', @OverallAcademicPerformance AS 'OverallAcademicPerformance',
+	--@Variation AS 'Variation', @Dispersion AS 'Dispersion',
+	--@StandartDeviation AS 'StandartDeviation', @AverageComplexityForTopic AS 'AverageComplexityForTopic',
+	--@AverageTimeForTask AS 'AverageTimeForTask', @AverageTimeForTopic AS 'AverageTimeForTopic',
+	--@HighestPossibleScore AS 'HighestPossibleScore', @HighestScore AS 'HighestScore'
 
 	IF NOT EXISTS(SELECT * FROM TopicStatistics WHERE TopicId = @TopicId)
 	BEGIN
@@ -194,9 +194,9 @@ BEGIN
 		SET @LogitOfLevelKnowledge = LOG(@PartOfIncorrectStudentAnswers/@PartOfCorrectStudentAnswers);
 	END
 
-	SELECT @SolvedTasksCount AS 'SolvedTasksCount', @SolvedCorrectTasksCount AS 'SolvedCorrectTasksCount',
-	@PartOfCorrectStudentAnswers AS 'PartOfCorrectStudentAnswers', @PartOfInCorrectStudentAnswers AS 'PartOfInCorrectStudentAnswers',
-	@LogitOfLevelKnowledge AS 'LogitOfLevelKnowledge'
+	--SELECT @SolvedTasksCount AS 'SolvedTasksCount', @SolvedCorrectTasksCount AS 'SolvedCorrectTasksCount',
+	--@PartOfCorrectStudentAnswers AS 'PartOfCorrectStudentAnswers', @PartOfInCorrectStudentAnswers AS 'PartOfInCorrectStudentAnswers',
+	--@LogitOfLevelKnowledge AS 'LogitOfLevelKnowledge'
 
 	IF NOT EXISTS(SELECT * FROM StudentStatistics WHERE StudentId = @StudentId)
 	BEGIN
@@ -213,3 +213,15 @@ BEGIN
 	END
 END
 
+
+CREATE TRIGGER [dbo].[UpdateTopicWeight]
+	ON [dbo].[Tasks]
+	AFTER INSERT
+AS
+BEGIN
+	DECLARE @Weight INT, @TopicId INT
+	SELECT @Weight = Weight, @TopicId = TopicId FROM INSERTED
+	UPDATE TopicStatistics
+	SET HighestPossibleScore += @Weight
+	WHERE TopicId = @TopicId
+END

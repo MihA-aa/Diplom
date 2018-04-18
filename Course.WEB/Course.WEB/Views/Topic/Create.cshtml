@@ -7,7 +7,7 @@
 <h2>@ViewBag.Title</h2>
 
 <div id="infaCreate">
-    @using (Html.BeginForm("CreateTopic", "Home", FormMethod.Post, new { style = "" }))
+    @using (Html.BeginForm("Create", "Topic", FormMethod.Post, new { style = "" }))
             {
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Id)
@@ -30,7 +30,7 @@
             @Html.LabelFor(model => model.PlannedComplexity)
             @Html.EditorFor(model => model.PlannedComplexity, new
        {
-           htmlAttributes = new { @class = "form-control", placeholder = "7.45" },
+           htmlAttributes = new { @class = "form-control", placeholder = "0.45" },
        })
             @Html.ValidationMessageFor(model => model.PlannedComplexity)
         </div>
@@ -41,7 +41,7 @@
                 </button>
                 <button type="button" class="btn btn-default btn-mine">
                     <span class="fi-x" style="font-size: 18px;">
-                        @Html.ActionLink("Отмена", "ShowCourse", "Home", new { courseId = ViewBag.CourseId }, new
+                        @Html.ActionLink("Отмена", "Get", "Course", new { courseId = ViewBag.CourseId }, new
                    {
                        style = "color: #333333; text-decoration: none; "
                    })

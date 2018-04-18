@@ -49,12 +49,10 @@ namespace Course.WEB.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Емэйл")]
-        [EmailAddress]
-        public string Email { get; set; }
+        [Display(Name = "Логин")]
+        public string UserName { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
 
@@ -70,27 +68,30 @@ namespace Course.WEB.Models
         public string Email { get; set; }
 
         [Required]
-        //[StringLength(50, ErrorMessage = "Фамилия должна быть больше 3 и меньше 50 символов", MinimumLength = 3)]
+        [StringLength(50, ErrorMessage = "Логин должен быть больше 3 и меньше 50 символов", MinimumLength = 3)]
+        [Display(Name = "Логин")]
+        public string UserName { get; set; }
+
+        [Required]
+        [StringLength(50, ErrorMessage = "Фамилия должна быть больше 3 и меньше 50 символов", MinimumLength = 3)]
         [Display(Name = "Фамилия")]
         public string LastName { get; set; }
 
         [Required]
-        //[StringLength(50, ErrorMessage = "Имя должно быть больше 3 и меньше 50 символов", MinimumLength = 3)]
+        [StringLength(50, ErrorMessage = "Имя должно быть больше 3 и меньше 50 символов", MinimumLength = 3)]
         [Display(Name = "Имя")]
         public string FirstName { get; set; }
-
-        [Required]
-        //[StringLength(50, ErrorMessage = "Отчество должно быть больше 3 и меньше 50 символов", MinimumLength = 3)]
+        
+        [StringLength(50, ErrorMessage = "Отчество должно быть больше 3 и меньше 50 символов", MinimumLength = 3)]
         [Display(Name = "Отчество")]
         public string MiddleName { get; set; }
 
         [Required]
-        //[StringLength(100, ErrorMessage = "Пароль должен быть больше 6 и меньше 100 символов", MinimumLength = 6)]
-        //[DataType(DataType.Password)]
+        [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
 
-        //[DataType(DataType.Password)]
+        [DataType(DataType.Password)]
         [Display(Name = "Подтверждение пароля")]
         [Compare("Password", ErrorMessage = "Пароль и подтверждение пароля не совпадают")]
         public string ConfirmPassword { get; set; }

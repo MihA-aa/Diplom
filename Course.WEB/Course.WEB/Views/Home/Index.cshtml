@@ -1,5 +1,5 @@
 ﻿@model Course.WEB.Models.MyViewModel.HomePageViewModel
-@using Microsoft.AspNet.Identity
+@using Course.WEB.Helpers
 @{
     ViewBag.Title = "Главная страница";
 }
@@ -49,11 +49,11 @@
 <div>
     @for (int i = 0; i < Model.Disciplines.Count(); i++)
     {
-        if (Model.Disciplines.ToList()[i].CreatorId == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
+        if (User.HasPermissionToRedact(Model.Disciplines.ToList()[i].CreatorId))
         {
             if (User.Identity.IsAuthenticated)
             {
-                using (Html.BeginForm("RedactDiscipline", "Home", FormMethod.Get, new
+                using (Html.BeginForm("Edit", "Discipline", FormMethod.Get, new
                 {
                     style = "display: inline-block; right: 310px; position: absolute; margin-top: 2px; "
                 }))
@@ -76,7 +76,7 @@
                               style="font-size: 20px;"></span>
                     </button>
                 }
-                using (Html.BeginForm("CreateCourse", "Home", FormMethod.Get, new
+                using (Html.BeginForm("Create", "Course", FormMethod.Get, new
                 {
                     style = "display: inline-block; right: 230px; position: absolute; margin-top: 2px; "
                 }))
@@ -99,7 +99,7 @@
         <div class="subItemList">
             @foreach (var course in Model.Disciplines.ToList()[i].Courses)
             {
-            <a href="@Url.Action("ShowCourse", "Home", new { courseId = course.Id }, null)"
+            <a href="@Url.Action("Get", "Course", new { courseId = course.Id }, null)"
                style="text-decoration: none;">
                 <div class="subItem transition">
                     <h4 style="font-size: 15px; padding: 8px;">

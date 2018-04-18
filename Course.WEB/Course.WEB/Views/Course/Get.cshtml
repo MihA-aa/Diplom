@@ -1,19 +1,19 @@
-﻿@model Course.WEB.Models.Entities.Course
-@using Microsoft.AspNet.Identity
+﻿@model Course.WEB.Models.MyViewModel.CourseViewModel
+@using Course.WEB.Helpers
 @{
-    ViewBag.Title = Model.Name;
+    ViewBag.Title = Model.Course.Name;
 }
 
-<h2>Курс - @Model.Name</h2>
+<h2>Курс - @Model.Course.Name</h2>
 <div style="margin: 25px 100px 25px 10px;">
-    <div style="margin: 10px;">@Model.Description</div>
+    <div style="margin: 10px;">@Model.Course.Description</div>
     <div style="margin: 5px 10px;">
         <strong>Дисциплина - </strong>
-        <a href="@Url.Action("ShowDiscipline", "Home", new { disciplineId = Model.Discipline.Id }, null)">@Model.Discipline.Name</a>
+        <a href="@Url.Action("Get", "Discipline", new { disciplineId = Model.Course.Discipline.Id }, null)">@Model.Course.Discipline.Name</a>
     </div>
-    <div style="margin: 5px 10px;"><strong>Всего тем в курсе:</strong> @Model.Topics.Count()</div>
+    <div style="margin: 5px 10px;"><strong>Всего тем в курсе:</strong> @Model.Course.Topics.Count()</div>
 </div>
-@if (Model.Topics.Count() == 0)
+@if (Model.Course.Topics.Count() == 0)
 {
     <h3 style="margin: 10px; margin-bottom: 15px;">В этом курсе ещё нет ни одной темы</h3>
 }
@@ -21,29 +21,29 @@ else
 {
     <h3 style="margin: 10px; margin-bottom: 15px;">Темы проходимые в курсе: </h3>
     <div>
-        @for (int i = 0; i < Model.Topics.Count(); i++)
+        @for (int i = 0; i < Model.Course.Topics.Count(); i++)
         {
             <div style="background: #f7f3ef; margin: 10px; padding: 10px; margin-right: 100px">
                 <div>
                     <h4>
-                        <a href="@Url.Action("ShowTopic", "Home", new { topicId = Model.Topics.ToList()[i].Id }, null)">
-                            @(i + 1). @Model.Topics.ToList()[i].Name
+                        <a href="@Url.Action("Get", "Topic", new { topicId = Model.Course.Topics.ToList()[i].Id }, null)">
+                            @(i + 1). @Model.Course.Topics.ToList()[i].Name
                         </a>
-                        @if (Model.Topics.ToList()[i].Creator.Id == User.Identity.GetUserId() || User.IsInRole("superAdmin"))
+                        @if (User.HasPermissionToRedact(Model.Course.Topics.ToList()[i].Creator.Id))
                         {
-                            using (Html.BeginForm("RedactTopic", "Home", FormMethod.Get, new
+                            using (Html.BeginForm("Edit", "Topic", FormMethod.Get, new
                             {
                                 style = "display: inline-block; margin-right: 5px;"
                             }))
                             {
-                                @Html.Hidden("topicId", Model.Topics.ToList()[i].Id)
+                                @Html.Hidden("topicId", Model.Course.Topics.ToList()[i].Id)
                                 <button type="submit" class="btn btn-default btn-mine"
                                         style="padding: 0px 7px;">
                                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"
                                           style="font-size: 20px;"></span>
                                 </button>
                             }
-                            using (Html.BeginForm("DeleteTopic", "Home", new { topicId = Model.Topics.ToList()[i].Id }, FormMethod.Post, new
+                            using (Html.BeginForm("Delete", "Topic", new { topicId = Model.Course.Topics.ToList()[i].Id }, FormMethod.Post, new
                             {
                                 style = "display: inline-block;right: 215px; position: absolute; margin-top: -10px; "
                             }))
@@ -58,29 +58,35 @@ else
                     </h4>
                 </div>
                 <div>
-                    @Model.Topics.ToList()[i].Description
+                    @Model.Course.Topics.ToList()[i].Description
                 </div>
                 <div>
-                    Средняя сложность задач в теме: @Model.Topics.ToList()[i].AverageComplexity
+                    Задач в теме: @Model.Course.Topics.ToList()[i].Tasks.Count()
                 </div>
-                @if (Model.Topics.ToList()[i].Creator != null)
+                @if (Model.TopicsStatistic.FirstOrDefault(x => x.TopicId == Model.Course.Topics.ToList()[i].Id) != null)
+                {
+                    <div>
+                        Средняя сложность задач в теме: @Model.TopicsStatistic.FirstOrDefault(x => x.TopicId == Model.Course.Topics.ToList()[i].Id).AverageComplexity
+                    </div>
+                }
+                @if (Model.Course.Topics.ToList()[i].Creator != null)
                 {
                     <span>Автор: </span>
-                    @Html.ActionLink(Model.Topics.ToList()[i].Creator.LastName + " " + Model.Topics.ToList()[i].Creator.FirstName,
-               "Index", "Manage", new { user_id = Model.Topics.ToList()[i].Creator.Id }, null)
+                    @Html.ActionLink(Model.Course.Topics.ToList()[i].Creator.LastName + " " + Model.Course.Topics.ToList()[i].Creator.FirstName,
+               "Index", "Manage", new { user_id = Model.Course.Topics.ToList()[i].Creator.Id }, null)
                 }
             </div>
         }
     </div>
 }
-@if (User.IsInRole("admin") || User.IsInRole("superAdmin"))
+@if (User.HasPermissionToCreate())
 {
-using (Html.BeginForm("CreateTopic", "Home", FormMethod.Get, new
+using (Html.BeginForm("Create", "Topic", FormMethod.Get, new
 {
     style = "display: inline-block; margin-left: 10px;"
 }))
 {
-    @Html.Hidden("courseId", Model.Id)
+    @Html.Hidden("courseId", Model.Course.Id)
     <button type="submit" class="btn btn-default btn-mine"
             style="">
         <span class="glyphicon glyphicon-plus" aria-hidden="true"

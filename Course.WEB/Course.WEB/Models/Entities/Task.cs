@@ -14,11 +14,9 @@ namespace Course.WEB.Models.Entities
         [Display(Name = "Название задачи")]
         public string Name { get; set; }
 
-        [Range(typeof(decimal), "0", "10", ErrorMessage ="Значение должно быть в пределе от {1} до {2}.")]
+        [Range(typeof(decimal), "0", "1", ErrorMessage ="Значение должно быть в пределе от {1} до {2}.")]
         [Display(Name = "Планируемая сложность задачи")]
         public decimal PlannedComplexity { get; set; }
-
-        public decimal AverageComplexity { get; set; }
 
         [Range(typeof(int), "0", "3600", ErrorMessage = "Значение должно быть в пределе от {1} до {2}.")]
         [Display(Name = "Планируемое время решения задачи (секунд)")]

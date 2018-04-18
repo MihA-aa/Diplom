@@ -197,8 +197,15 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\StatisticController.cs" />
+    <Compile Include="Controllers\DisciplineController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\CourseController.cs" />
+    <Compile Include="Controllers\TopicController.cs" />
+    <Compile Include="Controllers\TaskController.cs" />
+    <Compile Include="Helpers\UserExtensions.cs" />
+    <Compile Include="Helpers\StringExtension.cs" />
     <Compile Include="Models\Entities\StudentStatistic.cs" />
     <Compile Include="Models\Entities\TaskStatistic.cs" />
     <Compile Include="Models\Entities\TopicStatistic.cs" />
@@ -216,8 +223,9 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\MyViewModel\CourseViewModel.cs" />
     <Compile Include="Models\MyViewModel\HomePageViewModel.cs" />
-    <Compile Include="Models\MyViewModel\TopicTasksViewModel.cs" />
+    <Compile Include="Models\MyViewModel\TopicViewModel.cs" />
     <Compile Include="Models\Repositories\ClientProfileRepository.cs" />
     <Compile Include="Models\Repositories\CourseRepository.cs" />
     <Compile Include="Models\Repositories\DisciplineRepository.cs" />
@@ -516,18 +524,18 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\Show.cshtml" />
-    <Content Include="Views\Home\CreateTask.cshtml" />
-    <Content Include="Views\Home\SolveTask.cshtml" />
-    <Content Include="Views\Home\ShowTopic.cshtml" />
-    <Content Include="Views\Home\RedactTask.cshtml" />
-    <Content Include="Views\Home\ShowCourse.cshtml" />
-    <Content Include="Views\Home\CreateTopic.cshtml" />
-    <Content Include="Views\Home\RedactTopic.cshtml" />
-    <Content Include="Views\Home\ShowDiscipline.cshtml" />
-    <Content Include="Views\Home\CreateCourse.cshtml" />
-    <Content Include="Views\Home\RedactCourse.cshtml" />
-    <Content Include="Views\Home\CreateDiscipline.cshtml" />
-    <Content Include="Views\Home\RedactDiscipline.cshtml" />
+    <Content Include="Views\Task\Create.cshtml" />
+    <Content Include="Views\Task\Solve.cshtml" />
+    <Content Include="Views\Topic\Get.cshtml" />
+    <Content Include="Views\Task\Edit.cshtml" />
+    <Content Include="Views\Course\Get.cshtml" />
+    <Content Include="Views\Topic\Create.cshtml" />
+    <Content Include="Views\Topic\Edit.cshtml" />
+    <Content Include="Views\Discipline\Get.cshtml" />
+    <Content Include="Views\Course\Create.cshtml" />
+    <Content Include="Views\Course\Edit.cshtml" />
+    <Content Include="Views\Discipline\Create.cshtml" />
+    <Content Include="Views\Discipline\Edit.cshtml" />
     <Content Include="Views\Admin\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

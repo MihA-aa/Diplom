@@ -24,11 +24,9 @@ namespace Course.WEB.Models.Entities
         public string CreatorId { get; set; }
 
         public virtual ApplicationUser Creator { get; set; }
-        //public virtual ICollection<ClientProfile> Teachers { get; set; }
 
         public Discipline()
         {
-            //Teachers = new List<ClientProfile>();
             Courses = new List<Course>();
         }
 

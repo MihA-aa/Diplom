@@ -7,7 +7,7 @@
 <h2>@ViewBag.Title</h2>
 
 <div id="infaCreate">
-    @using (Html.BeginForm("RedactDiscipline", "Home", FormMethod.Post, new { style = "" }))
+    @using (Html.BeginForm("Edit", "Discipline", FormMethod.Post, new { style = "" }))
             {
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Id)
