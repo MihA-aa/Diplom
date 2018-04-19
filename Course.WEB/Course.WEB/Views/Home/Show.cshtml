@@ -4,7 +4,7 @@
 }
 <h2>@ViewBag.table</h2>
 
-<table id="example" class="display" width="100%" cellspacing="0">
+<table id="show" class="display" width="100%" cellspacing="0">
     <thead>
         <tr>
             @foreach (var c in Model.First())
@@ -36,7 +36,7 @@
 @section Scripts {
     <script>
   $(function(){
-    $("#example").dataTable();
+    $("#show").dataTable();
   })
 </script>
 }

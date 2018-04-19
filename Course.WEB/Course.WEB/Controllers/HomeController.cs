@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
-using Course.WEB.Models.Entities;
 using Course.WEB.Models.MyViewModel;
-using Course.WEB.Helpers;
 
 namespace Course.WEB.Controllers
 {

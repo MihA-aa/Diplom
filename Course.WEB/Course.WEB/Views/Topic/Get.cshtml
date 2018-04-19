@@ -31,7 +31,7 @@
         if (User.HasPermissionToRedact(Model.Topic.CreatorId))
         {
             <div style="margin: 5px 10px;">
-                <a href="@Url.Action("Show", "Home", new { item = "Topics" }, null)">Посмотреть подробную статистику</a>
+                <a href="@Url.Action("Topic", "Statistic", new { topicId = Model.Topic.Id }, null)">Посмотреть подробную статистику</a>
             </div>
         }
     }

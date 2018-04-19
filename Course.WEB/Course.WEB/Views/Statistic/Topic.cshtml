@@ -1,0 +1,46 @@
+﻿@model Course.WEB.Models.MyViewModel.TopicStatisticViewModel
+@{
+    ViewBag.Title = Model.Topic.Name; ;
+}
+
+<h2>@Model.Topic.Name</h2>
+
+<table id="topicStatistic" class="display" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th rowspan="2">Студент</th>
+            <th colspan="@Model.Topic.Tasks.Count()">
+                <span style ="display: block; margin: 0 auto; width: 150px;">Номер задания</span>
+            </th>
+            <th rowspan="2">Набрано баллов</th>
+        </tr>
+        <tr>
+            @foreach (var task in Model.Topic.Tasks)
+            {
+                <th>@task.Name</th>
+            }
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th>Правильных ответов</th>
+            <td>3</td>
+            <td>1</td>
+            <td>2</td>
+        </tr>
+        <tr>
+            <th>Корреляция</th>
+            <td>3</td>
+            <td>1</td>
+            <td>2</td>
+        </tr>
+    </tfoot>
+</table>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#topicStatistic").dataTable();
+        })
+    </script>
+    }
