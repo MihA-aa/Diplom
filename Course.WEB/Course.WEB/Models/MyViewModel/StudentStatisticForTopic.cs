@@ -9,5 +9,7 @@ namespace Course.WEB.Models.MyViewModel
         public Dictionary<int, bool?> Tasks { get; set; }
 
         public int Points { get; set; }
+
+        public string UserId { get; set; }
     }
 }

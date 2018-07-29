@@ -10,7 +10,7 @@ namespace Course.WEB.Controllers
     [Authorize]
     public class TaskController : Controller
     {
-        readonly EFUnitOfWork db = new EFUnitOfWork();
+        public EFUnitOfWork db = new EFUnitOfWork();
 
         [HttpGet]
         public ActionResult Create(int? topicId)

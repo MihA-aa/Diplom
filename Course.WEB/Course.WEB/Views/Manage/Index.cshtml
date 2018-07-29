@@ -1,87 +1,75 @@
-﻿@model Course.WEB.Models.IndexViewModel
+﻿@model Course.WEB.Models.UserInformation
 @{
-    ViewBag.Title = "Manage";
+    ViewBag.Title = Model.Login;
 }
 
-<h2>@ViewBag.Title.</h2>
+<h2>@Model.UserName</h2>
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 <div>
-    <h4>Change your account settings</h4>
+    <h4>@Model.Role</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>Password:</dt>
-        <dd>
-            [
-            @if (Model.HasPassword)
-            {
-                @Html.ActionLink("Change your password", "ChangePassword")
-            }
-            else
-            {
-                @Html.ActionLink("Create", "SetPassword")
-            }
-            ]
-        </dd>
-        <dt>External Logins:</dt>
-        <dd>
-            @Model.Logins.Count [
-            @Html.ActionLink("Manage", "ManageLogins") ]
-        </dd>
-        @*
-            Phone Numbers can used as a second factor of verification in a two-factor authentication system.
-             
-             See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-             
-             Uncomment the following block after you have set up two-factor authentication
-        *@
-        @*  
-            <dt>Phone Number:</dt>
-            <dd>
-                @(Model.PhoneNumber ?? "None")
-                @if (Model.PhoneNumber != null)
-                {
-                    <br />
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
-                    using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
-                    }
-                }
-                else
-                {
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
-                }
-            </dd>
-        *@
-        <dt>Two-Factor Authentication:</dt>
-        <dd>
-            <p>
-                There are no two-factor authentication providers configured. See <a href="http://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication.
-            </p>
-            @*@if (Model.TwoFactor)
-                {
-                    using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Enabled
-                        <input type="submit" value="Disable" class="btn btn-link" />
-                        </text>
-                    }
-                }
-                else
-                {
-                    using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Disabled
-                        <input type="submit" value="Enable" class="btn btn-link" />
-                        </text>
-                    }
-                }*@
-        </dd>
-    </dl>
+
 </div>
+<div style="margin: 25px 100px 25px 10px; padding: 25px 100px 25px 10px; background: #f7f3ef;">
+    <div style="margin: 5px 10px;"><h4><strong>Коэффициент правильных ответов: </strong>@Model.StudentStatistic.PartOfCorrectAnswers</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Коэффициент не правильных ответов: </strong>@Model.StudentStatistic.PartOfIncorrectAnswers</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Логит уовня знаний: </strong>@Model.StudentStatistic.LogitOfLevelKnowledge</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Всего решено задач: </strong>@Model.Ratings.Count</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Всего решено задач верно: </strong>@Model.Ratings.Count(x => x.IsSolved)</h4></div>
+</div>
+
+<table id="studentStatistic" class="display cell-border" cellspacing="0" style="border: 1px solid rgb(17, 17, 17); width=100%">
+    <thead>
+        <tr>
+            <th>
+                Задача
+            </th>
+            <th>
+                Тема
+            </th>
+            <th>
+                Дата
+            </th>
+            <th>
+                Время решения (секунд)
+            </th>
+            <th>
+                Ответ
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var rating in Model.Ratings)
+    {
+        <tr>
+            <td>
+                @rating.Task.Name
+            </td>
+            <td>
+                @rating.Task.Topic.Name
+            </td>
+            <td>
+                @rating.DateOfSolution
+            </td>
+            <td>
+                @rating.ActualTime
+            </td>
+            <td>
+                @{ var answer = rating.IsSolved ? "Верный" : "Не верный";}
+                @answer
+            </td>
+        </tr>
+        
+    }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    <script>
+        $(function () {
+            $("#studentStatistic").dataTable();
+        })
+    </script>
+}

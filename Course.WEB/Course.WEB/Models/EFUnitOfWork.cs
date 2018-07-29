@@ -52,7 +52,7 @@ namespace Course.WEB.Models.Repositories
             }
         }
 
-        public IRepository<Task> Tasks
+        public virtual IRepository<Task> Tasks
         {
             get
             {

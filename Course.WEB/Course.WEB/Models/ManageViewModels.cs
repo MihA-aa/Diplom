@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Course.WEB.Models.Entities;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 
@@ -12,6 +13,19 @@ namespace Course.WEB.Models
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
+    }
+
+    public class UserInformation
+    {
+        public StudentStatistic StudentStatistic { get; set; }
+
+        public string UserName { get; set; }
+
+        public string Login { get; set; }
+
+        public string Role { get; set; }
+
+        public List<Rating> Ratings { get; set; }
     }
 
     public class AdminPanelViewModel

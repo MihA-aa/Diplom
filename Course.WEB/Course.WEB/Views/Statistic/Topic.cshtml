@@ -3,44 +3,105 @@
     ViewBag.Title = Model.Topic.Name; ;
 }
 
-<h2>@Model.Topic.Name</h2>
+<style>
+    .statistic-cell {
+        border-right: 1px solid #111;
+    }
+</style>
 
-<table id="topicStatistic" class="display" width="100%" cellspacing="0">
+<h2><a href="@Url.Action("Get", "Topic", new { topicId = Model.Topic.Id }, null)" style="text-decoration: none;">@Model.Topic.Name</a></h2>
+
+<div style="margin: 25px 100px 25px 10px; padding: 25px 100px 25px 10px; background: #f7f3ef;">
+    <div style="margin: 5px 10px;"><h4><strong>Средняя сложность задач в теме: </strong>@Model.TopicStatistic.AverageComplexity</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Среднее время прохождения темы: </strong>@Model.TopicStatistic.AverageTimeForTopic</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Среднее время решения задачи в теме: </strong>@Model.TopicStatistic.AverageTimeForTask</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Максимальный полученный результат: </strong>@Model.TopicStatistic.HighestScore</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Общий уровень успеваемости: </strong>@Model.TopicStatistic.OverallAcademicPerformance</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Вариация: </strong>@Model.TopicStatistic.Variation</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Дисперсия: </strong>@Model.TopicStatistic.Dispersion</h4></div>
+    <div style="margin: 5px 10px;"><h4><strong>Стандартное отклонение: </strong>@Model.TopicStatistic.StandartDeviation</h4></div>
+</div>
+<table id="topicStatistic" class="display cell-border" cellspacing="0" style="border: 1px solid rgb(17, 17, 17); width=100%">
     <thead>
         <tr>
             <th rowspan="2">Студент</th>
             <th colspan="@Model.Topic.Tasks.Count()">
-                <span style ="display: block; margin: 0 auto; width: 150px;">Номер задания</span>
+                <span style="display: block; margin: 0 auto; width: 150px;">Номер задания</span>
             </th>
             <th rowspan="2">Набрано баллов</th>
         </tr>
         <tr>
             @foreach (var task in Model.Topic.Tasks)
             {
-                <th>@task.Name</th>
+                <th>@task.Name (@task.Weight)</th>
             }
         </tr>
     </thead>
+    <tbody>
+        @foreach (var student in Model.StudentStatistics)
+        {
+            <tr>
+                <td>
+                    @Html.ActionLink(student.Initials, "Index", "Manage", new { user_id = student.UserId }, null)
+                </td>
+                @foreach (var task in Model.Topic.Tasks)
+                {
+                    var isSolved = student.Tasks[task.Id] != null ? Convert.ToInt32(student.Tasks[task.Id]).ToString() : "";
+                    <td>@isSolved</td>
+                }
+                <td>@student.Points</td>
+            </tr>
+        }
+    </tbody>
     <tfoot>
         <tr>
-            <th>Правильных ответов</th>
-            <td>3</td>
-            <td>1</td>
-            <td>2</td>
-        </tr>
-        <tr>
-            <th>Корреляция</th>
-            <td>3</td>
-            <td>1</td>
-            <td>2</td>
-        </tr>
-    </tfoot>
-</table>
+            <th class="statistic-cell">
+                Правильных ответов</thclass>
+                @foreach (var task in Model.Topic.Tasks)
+                {
+                    var solvedCorrectCount = Model.TasksStatistic.FirstOrDefault(x => x.TaskId == task.Id)?.SolvedCorrectCount;
+                <td class="statistic-cell">@solvedCorrectCount</td>
+            }
+            </tr>
+            <tr>
+                <th class="statistic-cell">Сложность</th>
+                @foreach (var task in Model.Topic.Tasks)
+                {
+                    var complexity = Model.TasksStatistic.FirstOrDefault(x => x.TaskId == task.Id)?.Complexity;
+                    <td class="statistic-cell">@complexity</td>
+                }
+            </tr>
+            <tr>
+                <th class="statistic-cell">Среднее время решения</th>
+                @foreach (var task in Model.Topic.Tasks)
+                {
+                    var averageTime = Model.TasksStatistic.FirstOrDefault(x => x.TaskId == task.Id)?.AverageTime;
+                    <td class="statistic-cell">@averageTime</td>
+                }
+            </tr>
+            <tr>
+                <th class="statistic-cell">Логит сложности задания</th>
+                @foreach (var task in Model.Topic.Tasks)
+                {
+                    var logitOfTaskDifficulty = Model.TasksStatistic.FirstOrDefault(x => x.TaskId == task.Id)?.LogitOfTaskDifficulty;
+                    <td class="statistic-cell">@logitOfTaskDifficulty</td>
+                }
+            </tr>
+            <tr>
+                <th class="statistic-cell">Корреляция</th>
+                @foreach (var task in Model.Topic.Tasks)
+                {
+                    var solvedCorrectCount = Model.TasksStatistic.FirstOrDefault(x => x.TaskId == task.Id)?.SolvedCorrectCount;
+                    <td class="statistic-cell">@solvedCorrectCount</td>
+                }
+            </tr>
+        </tfoot>
+    </table>
 
-@section Scripts {
-    <script>
-        $(function () {
-            $("#topicStatistic").dataTable();
-        })
-    </script>
+    @section Scripts {
+        <script>
+            $(function () {
+                $("#topicStatistic").dataTable();
+            })
+        </script>
     }

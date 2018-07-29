@@ -7,6 +7,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Course.WEB.Models;
+using Course.WEB.Models.Repositories;
 
 namespace Course.WEB.Controllers
 {
@@ -16,6 +17,7 @@ namespace Course.WEB.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
+        readonly EFUnitOfWork db = new EFUnitOfWork();
         public ManageController()
         {
         }
@@ -52,27 +54,34 @@ namespace Course.WEB.Controllers
 
         //
         // GET: /Manage/Index
-        public async Task<ActionResult> Index(ManageMessageId? message)
+        public async Task<ActionResult> Index(string userId = "")
         {
-            ViewBag.StatusMessage =
-                message == ManageMessageId.ChangePasswordSuccess ? "Your password has been changed."
-                : message == ManageMessageId.SetPasswordSuccess ? "Your password has been set."
-                : message == ManageMessageId.SetTwoFactorSuccess ? "Your two-factor authentication provider has been set."
-                : message == ManageMessageId.Error ? "An error has occurred."
-                : message == ManageMessageId.AddPhoneSuccess ? "Your phone number was added."
-                : message == ManageMessageId.RemovePhoneSuccess ? "Your phone number was removed."
-                : "";
+            userId = String.IsNullOrEmpty(userId) ? User.Identity.GetUserId() : userId;
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var userRatings = db.Ratings.Find(x => x.StudentId == userId)
+                .GroupBy(x => new { x.StudentId, x.TaskId }, (key, g) => g.OrderBy(e => e.DateOfSolution).FirstOrDefault()).ToList();
 
-            var userId = User.Identity.GetUserId();
-            var model = new IndexViewModel
+            var model = new UserInformation
             {
-                HasPassword = HasPassword(),
-                PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
-                TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
-                Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                StudentStatistic = db.StudentStatistics.Find(x => x.StudentId == userId).FirstOrDefault(),
+                UserName = user.LastName + " " + user.FirstName + " " + user.MiddleName,
+                Login = user.UserName,
+                Ratings = userRatings,
+                Role = GetRoleName(UserManager.GetRolesAsync(userId).Result.FirstOrDefault()),
             };
+
             return View(model);
+        }
+
+        private string GetRoleName(string role)
+        {
+            switch (role)
+            {
+                case "user": return "Студент";
+                case "admin": return "Преподаватель";
+                case "superAdmin": return "СтудГлавный преподаватель";
+                default: return "";
+            }
         }
 
         //

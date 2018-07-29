@@ -37,6 +37,7 @@ namespace Course.WEB.Controllers
                 return new StudentStatisticForTopic
                 {
                     Initials = x.Student.FirstName + " " + x.Student.LastName,
+                    UserId = x.StudentId,
                     Tasks = dict,
                     Points = ratings
                     .Where(y => y.StudentId == x.StudentId)
@@ -45,7 +46,7 @@ namespace Course.WEB.Controllers
                     .Sum()
                 };
             }).GroupBy(x => x.Initials, (key, g) => g.FirstOrDefault()).ToList();
-            
+
             var viewModel = new TopicStatisticViewModel
             {
                 Topic = topic,
@@ -53,7 +54,7 @@ namespace Course.WEB.Controllers
                 TasksStatistic = tasksStatistic,
                 StudentStatistics = studentStatistics
             };
-            
+
             return View(viewModel);
         }
     }
