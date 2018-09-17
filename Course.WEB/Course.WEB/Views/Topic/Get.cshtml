@@ -63,6 +63,16 @@ else
                                   style="font-size: 20px;"></span>
                         </button>
                     }
+                    using (Html.BeginForm("Get", "Graphic", FormMethod.Get, new
+                    {
+                        style = "display: inline-block; margin-right: 5px;"
+                    }))
+                    {
+                        <button type="submit" class="btn btn-default btn-mine"
+                                style="padding: 0px 7px;">
+                            Решить на графике
+                        </button>
+                    }
                     using (Html.BeginForm("Delete", "Task", new { taskId = Model.Topic.Tasks.ToList()[i].Id }, FormMethod.Post, new
                     {
                         style = "display: inline-block;right: 215px; position: absolute; margin-top: -10px; "
