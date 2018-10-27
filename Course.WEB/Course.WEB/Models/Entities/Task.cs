@@ -1,7 +1,7 @@
-﻿using Course.WEB.Models.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Course.WEB.Models.Interfaces;
 
 namespace Course.WEB.Models.Entities
 {
@@ -50,19 +50,19 @@ namespace Course.WEB.Models.Entities
 
         public Dictionary<string, string> GetProperties()
         {
-            Dictionary<string, string> DictProperties = new Dictionary<string, string>
+            Dictionary<string, string> dictProperties = new Dictionary<string, string>
             {
-                {"Id", Convert.ToString(this.Id)},
-                {"Название", this.Name},
-                {"Тема", this.Topic.Name},
-                {"Условие", Convert.ToString(this.Condition)},
-                {"Планируемая сложность", Convert.ToString(this.PlannedComplexity)},
-                {"Планируемое время решения (секунд)", Convert.ToString(this.PlannedTime)},
-                {"Частота востребования в курсах", Convert.ToString(this.PeriodicityOfRequirement)},
-                {"Частота посещения", Convert.ToString(this.PeriodicityOfVisiting)},
-                {"Ответ", Convert.ToString(this.Answer)},
+                { "Id", Convert.ToString(Id) },
+                { "Название", Name },
+                { "Тема", Topic.Name },
+                { "Условие", Convert.ToString(Condition) },
+                { "Планируемая сложность", Convert.ToString(PlannedComplexity) },
+                { "Планируемое время решения (секунд)", Convert.ToString(PlannedTime) },
+                { "Частота востребования в курсах", Convert.ToString(PeriodicityOfRequirement) },
+                { "Частота посещения", Convert.ToString(PeriodicityOfVisiting) },
+                { "Ответ", Convert.ToString(Answer) },
             };
-            return DictProperties;
+            return dictProperties;
         }
     }
 }

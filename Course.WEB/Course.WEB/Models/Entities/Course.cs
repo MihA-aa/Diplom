@@ -1,11 +1,16 @@
-﻿using Course.WEB.Models.Interfaces;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Course.WEB.Models.Interfaces;
 
 namespace Course.WEB.Models.Entities
 {
-    public class Course: IGetProperties
+    public class Course : IGetProperties
     {
+        public Course()
+        {
+            Topics = new List<Topic>();
+        }
+
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Название не может быть пустым")]
@@ -27,21 +32,16 @@ namespace Course.WEB.Models.Entities
         public string CreatorId { get; set; }
 
         public virtual ApplicationUser Creator { get; set; }
-        
-        public Course()
-        {
-            Topics = new List<Topic>();
-        }
 
         public Dictionary<string, string> GetProperties()
         {
-            Dictionary<string, string> DictProperties = new Dictionary<string, string>
+            Dictionary<string, string> dictProperties = new Dictionary<string, string>
             {
-                {"Название", this.Name},
-                {"Дисциплина", this.Discipline.Name}
+                { "Название", Name },
+                { "Дисциплина", Discipline.Name }
             };
-            
-            return DictProperties;
+
+            return dictProperties;
         }
     }
 }

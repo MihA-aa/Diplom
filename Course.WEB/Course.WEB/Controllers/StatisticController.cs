@@ -1,8 +1,8 @@
-﻿using Course.WEB.Models.MyViewModel;
-using Course.WEB.Models.Repositories;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
+using Course.WEB.Models;
+using Course.WEB.Models.MyViewModel;
 using WebGrease.Css.Extensions;
 
 namespace Course.WEB.Controllers
@@ -10,18 +10,26 @@ namespace Course.WEB.Controllers
     [Authorize]
     public class StatisticController : Controller
     {
-        readonly EFUnitOfWork db = new EFUnitOfWork();
+        private readonly EFUnitOfWork db = new EFUnitOfWork();
 
         public ActionResult Topic(int? topicId)
         {
             if (topicId == null)
+            {
                 return HttpNotFound();
+            }
+
             var topic = db.Topics.Get(topicId.Value);
             if (topic == null)
+            {
                 return HttpNotFound();
+            }
+
             var topicStatistic = db.TopicStatistics.Find(x => x.TopicId == topicId).FirstOrDefault();
             if (topicStatistic == null)
+            {
                 return HttpNotFound();
+            }
 
             var taskIds = topic.Tasks.Select(x => x.Id);
             var tasksStatistic = db.TaskStatistics.Find(x => taskIds.Contains(x.TaskId)).ToList();

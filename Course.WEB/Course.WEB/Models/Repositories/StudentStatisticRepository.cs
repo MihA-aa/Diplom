@@ -4,7 +4,8 @@ namespace Course.WEB.Models.Repositories
 {
     public class StudentStatisticRepository : GenericRepository<StudentStatistic>
     {
-        public StudentStatisticRepository(ApplicationDbContext context) : base(context)
+        public StudentStatisticRepository(ApplicationDbContext context)
+            : base(context)
         {
         }
     }

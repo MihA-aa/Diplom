@@ -1,22 +1,27 @@
 ﻿using System.Web.Mvc;
-using Course.WEB.Models.Repositories;
-using Course.WEB.Models.Entities;
 using Course.WEB.Helpers;
+using Course.WEB.Models;
+using Course.WEB.Models.Entities;
 
 namespace Course.WEB.Controllers
 {
     public class DisciplineController : Controller
     {
-        readonly EFUnitOfWork db = new EFUnitOfWork();
+        private readonly EFUnitOfWork db = new EFUnitOfWork();
 
         [HttpGet]
         public ActionResult Get(int? disciplineId)
         {
             if (disciplineId == null)
+            {
                 return HttpNotFound();
+            }
+
             var discipline = db.Disciplines.Get(disciplineId.Value);
             if (discipline == null)
+            {
                 return HttpNotFound();
+            }
 
             return View(discipline);
         }
@@ -33,11 +38,14 @@ namespace Course.WEB.Controllers
         public ActionResult Create(Discipline discipline)
         {
             if (discipline == null)
+            {
                 return HttpNotFound();
+            }
+
             db.Disciplines.Create(discipline);
             db.Save();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
@@ -45,12 +53,20 @@ namespace Course.WEB.Controllers
         public ActionResult Edit(int? disciplineId)
         {
             if (disciplineId == null)
+            {
                 return HttpNotFound();
+            }
+
             var discipline = db.Disciplines.Get(disciplineId.Value);
             if (discipline == null)
+            {
                 return HttpNotFound();
+            }
+
             if (!User.HasPermissionToRedact(discipline.CreatorId))
+            {
                 return HttpNotFound();
+            }
 
             return View(discipline);
         }
@@ -60,11 +76,14 @@ namespace Course.WEB.Controllers
         public ActionResult Edit(Discipline discipline)
         {
             if (discipline == null)
+            {
                 return HttpNotFound();
+            }
+
             db.Disciplines.Update(discipline);
             db.Save();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

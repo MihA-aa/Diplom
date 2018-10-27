@@ -1,13 +1,14 @@
 ﻿using System;
-using Course.WEB.Models.Interfaces;
 using Course.WEB.Models.Entities;
+using Course.WEB.Models.Interfaces;
+using Course.WEB.Models.Repositories;
 using de = Course.WEB.Models.Entities;
 
-namespace Course.WEB.Models.Repositories
+namespace Course.WEB.Models
 {
     public class EFUnitOfWork : IUnitOfWork
     {
-        public ApplicationDbContext db;
+        private ApplicationDbContext db;
         private CourseRepository courseRepository;
         private DisciplineRepository disciplineRepository;
         private RatingRepository ratingRepository;
@@ -16,108 +17,44 @@ namespace Course.WEB.Models.Repositories
         private TaskStatisticRepository taskStatisticRepository;
         private StudentStatisticRepository studentStatisticRepository;
         private TopicStatisticRepository topicStatisticRepository;
+        private bool disposed;
 
         public EFUnitOfWork()
         {
             db = new ApplicationDbContext();
         }
 
-        public IRepository<de.Course> Courses
-        {
-            get
-            {
-                if (courseRepository == null)
-                    courseRepository = new CourseRepository(db);
-                return courseRepository;
-            }
-        }
+        public IRepository<de.Course> Courses => courseRepository ?? (courseRepository = new CourseRepository(db));
 
-        public IRepository<Discipline> Disciplines
-        {
-            get
-            {
-                if (disciplineRepository == null)
-                    disciplineRepository = new DisciplineRepository(db);
-                return disciplineRepository;
-            }
-        }
+        public IRepository<Discipline> Disciplines => disciplineRepository ?? (disciplineRepository = new DisciplineRepository(db));
 
-        public IRepository<Rating> Ratings
-        {
-            get
-            {
-                if (ratingRepository == null)
-                    ratingRepository = new RatingRepository(db);
-                return ratingRepository;
-            }
-        }
+        public IRepository<Rating> Ratings => ratingRepository ?? (ratingRepository = new RatingRepository(db));
 
-        public virtual IRepository<Task> Tasks
-        {
-            get
-            {
-                if (taskRepository == null)
-                    taskRepository = new TaskRepository(db);
-                return taskRepository;
-            }
-        }
+        public IRepository<Task> Tasks => taskRepository ?? (taskRepository = new TaskRepository(db));
 
-        public IRepository<Topic> Topics
-        {
-            get
-            {
-                if (topicRepository == null)
-                    topicRepository = new TopicRepository(db);
-                return topicRepository;
-            }
-        }
+        public IRepository<Topic> Topics => topicRepository ?? (topicRepository = new TopicRepository(db));
 
-        public IRepository<TaskStatistic> TaskStatistics
-        {
-            get
-            {
-                if (taskStatisticRepository == null)
-                    taskStatisticRepository = new TaskStatisticRepository(db);
-                return taskStatisticRepository;
-            }
-        }
-        
-        public IRepository<StudentStatistic> StudentStatistics
-        {
-            get
-            {
-                if (studentStatisticRepository == null)
-                    studentStatisticRepository = new StudentStatisticRepository(db);
-                return studentStatisticRepository;
-            }
-        }
+        public IRepository<TaskStatistic> TaskStatistics => taskStatisticRepository ?? (taskStatisticRepository = new TaskStatisticRepository(db));
 
-        public IRepository<TopicStatistic> TopicStatistics
-        {
-            get
-            {
-                if (topicStatisticRepository == null)
-                    topicStatisticRepository = new TopicStatisticRepository(db);
-                return topicStatisticRepository;
-            }
-        }
-        
+        public IRepository<StudentStatistic> StudentStatistics => studentStatisticRepository ?? (studentStatisticRepository = new StudentStatisticRepository(db));
+
+        public IRepository<TopicStatistic> TopicStatistics => topicStatisticRepository ?? (topicStatisticRepository = new TopicStatisticRepository(db));
+
         public void Save()
         {
             db.SaveChanges();
         }
 
-        private bool disposed = false;
-
         public virtual void Dispose(bool disposing)
         {
-            if (!this.disposed)
+            if (!disposed)
             {
                 if (disposing)
                 {
                     db.Dispose();
                 }
-                this.disposed = true;
+
+                disposed = true;
             }
         }
 

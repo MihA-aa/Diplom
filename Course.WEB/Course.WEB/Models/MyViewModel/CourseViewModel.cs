@@ -1,6 +1,6 @@
-﻿using de = Course.WEB.Models.Entities;
+﻿using System.Collections.Generic;
 using Course.WEB.Models.Entities;
-using System.Collections.Generic;
+using de = Course.WEB.Models.Entities;
 
 namespace Course.WEB.Models.MyViewModel
 {

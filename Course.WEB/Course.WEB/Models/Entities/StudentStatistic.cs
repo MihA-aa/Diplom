@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Course.WEB.Models.Entities
+﻿namespace Course.WEB.Models.Entities
 {
     public class StudentStatistic
     {

@@ -1,30 +1,20 @@
-﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace Course.WEB.Models.Repositories
 {
     public class UserRepository : IDisposable
     {
+        private readonly ApplicationUserManager userManager;
         private ApplicationDbContext db = new ApplicationDbContext();
-        private ApplicationUserManager userManager;
+
         public UserRepository()
         {
             userManager = new ApplicationUserManager(new UserStore<ApplicationUser>(db));
-        }
-        protected void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (db != null)
-                {
-                    db.Dispose();
-                    db = null;
-                }
-            }
         }
 
         public void Dispose()
@@ -52,6 +42,7 @@ namespace Course.WEB.Models.Repositories
                         IsSuperAdmin = userManager.IsInRole(user.Id, "superAdmin")
                     });
             }
+
             return usersStatistics;
         }
 
@@ -62,23 +53,15 @@ namespace Course.WEB.Models.Repositories
 
         public bool IsUserExist(string userId)
         {
-            if (GetUser(userId) != null)
-                return true;
-            return false;
-        }
-
-        private void EditUserRoles(string userId, string roleName, bool isAdd)
-        {
-            if (isAdd)
-                userManager.AddToRole(userId, roleName);
-            else
-                userManager.RemoveFromRole(userId, roleName);
+            return GetUser(userId) != null;
         }
 
         public void BlockUser(string userId, bool isBlock)
         {
             if (IsUserExist(userId))
+            {
                 EditUserRoles(userId, "blocked", isBlock);
+            }
         }
 
         public void UpgradeUser(string userId)
@@ -89,7 +72,7 @@ namespace Course.WEB.Models.Repositories
             tempUser.Roles.Add(new IdentityUserRole() { RoleId = "user" });
             db.SaveChanges();
         }
-        
+
         public ApplicationUser GetUserByName(string userName)
         {
             return db.Users.Include("Sites.Tags")
@@ -97,26 +80,29 @@ namespace Course.WEB.Models.Repositories
                 .Include("RateNotes")
                 .FirstOrDefault(x => x.UserName == userName);
         }
-        
-        //public IndexViewModel GetUserInfo(string user_id)
-        //{
-        //    var user = GetUser(user_id);
-        //    if (user != null)
-        //    {
-        //        var model = new IndexViewModel
-        //        {
-        //            UserName = user.UserName,
-        //            Avatar = user.Avatar,
-        //            RegistrutionDate = user.RegistrationDate,
-        //            UserRating = user.Rating,
-        //            UserInstructionsCount = user.Instructions.Count,
-        //            UserCommentsCount = user.Comments.Count,
-        //            UserLikesCount = GetUserVotes(user_id, 1),
-        //            UserDisLikesCount = GetUserVotes(user_id, -1)
-        //        };
-        //        return model;
-        //    }
-        //    return null;
-        //}
+
+        protected void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (db != null)
+                {
+                    db.Dispose();
+                    db = null;
+                }
+            }
+        }
+
+        private void EditUserRoles(string userId, string roleName, bool isAdd)
+        {
+            if (isAdd)
+            {
+                userManager.AddToRole(userId, roleName);
+            }
+            else
+            {
+                userManager.RemoveFromRole(userId, roleName);
+            }
+        }
     }
 }

@@ -1,12 +1,17 @@
-﻿using Course.WEB.Models.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Course.WEB.Models.Interfaces;
 
 namespace Course.WEB.Models.Entities
-{ 
+{
     public class Topic : IGetProperties
     {
+        public Topic()
+        {
+            Tasks = new List<Task>();
+        }
+
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Название не может быть пустым")]
@@ -33,20 +38,15 @@ namespace Course.WEB.Models.Entities
 
         public virtual ICollection<Task> Tasks { get; set; }
 
-        public Topic()
-        {
-            Tasks = new List<Task>();
-        }
-
         public Dictionary<string, string> GetProperties()
         {
-            Dictionary<string, string> DictProperties = new Dictionary<string, string>
+            Dictionary<string, string> dictProperties = new Dictionary<string, string>
             {
-                {"Название", this.Name},
-                {"Средняя сложность", Convert.ToString(this.PlannedComplexity)},
-                {"Курс", this.Course.Name}
+                { "Название", Name },
+                { "Средняя сложность", Convert.ToString(PlannedComplexity) },
+                { "Курс", Course.Name }
             };
-            return DictProperties;
+            return dictProperties;
         }
     }
 }

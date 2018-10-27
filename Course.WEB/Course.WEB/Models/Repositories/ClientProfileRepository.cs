@@ -2,7 +2,8 @@
 {
     public class ClientProfileRepository : GenericRepository<ApplicationUser>
     {
-        public ClientProfileRepository(ApplicationDbContext context) : base(context)
+        public ClientProfileRepository(ApplicationDbContext context)
+            : base(context)
         {
         }
     }

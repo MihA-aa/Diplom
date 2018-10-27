@@ -1,28 +1,25 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Course.WEB.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Course.WEB.Models;
 
 namespace Course.WEB.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private ApplicationSignInManager signInManager;
+        private ApplicationUserManager userManager;
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -30,29 +27,20 @@ namespace Course.WEB.Controllers
 
         public ApplicationSignInManager SignInManager
         {
-            get
-            {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
-            }
-            private set 
-            { 
-                _signInManager = value; 
-            }
+            get { return signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>(); }
+
+            private set { signInManager = value; }
         }
 
         public ApplicationUserManager UserManager
         {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            get { return userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>(); }
+
+            private set { userManager = value; }
         }
 
-        //
+        private IAuthenticationManager AuthenticationManager => HttpContext.GetOwinContext().Authentication;
+
         // GET: /Account/Login
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
@@ -61,7 +49,6 @@ namespace Course.WEB.Controllers
             return View();
         }
 
-        //
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
@@ -86,12 +73,11 @@ namespace Course.WEB.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
                     return View(model);
             }
         }
 
-        //
         // GET: /Account/VerifyCode
         [AllowAnonymous]
         public async Task<ActionResult> VerifyCode(string provider, string returnUrl, bool rememberMe)
@@ -101,10 +87,10 @@ namespace Course.WEB.Controllers
             {
                 return View("Error");
             }
+
             return View(new VerifyCodeViewModel { Provider = provider, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
         // POST: /Account/VerifyCode
         [HttpPost]
         [AllowAnonymous]
@@ -116,11 +102,11 @@ namespace Course.WEB.Controllers
                 return View(model);
             }
 
-            // The following code protects for brute force attacks against the two factor codes. 
-            // If a user enters incorrect codes for a specified amount of time then the user account 
-            // will be locked out for a specified amount of time. 
+            // The following code protects for brute force attacks against the two factor codes.
+            // If a user enters incorrect codes for a specified amount of time then the user account
+            // will be locked out for a specified amount of time.
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -129,12 +115,11 @@ namespace Course.WEB.Controllers
                     return View("Lockout");
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid code.");
+                    ModelState.AddModelError(string.Empty, "Invalid code.");
                     return View(model);
             }
         }
 
-        //
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
@@ -142,7 +127,6 @@ namespace Course.WEB.Controllers
             return View();
         }
 
-        //
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -151,22 +135,25 @@ namespace Course.WEB.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email,
-                    LastName = model.LastName, FirstName = model.FirstName, MiddleName = model.MiddleName };
+                var user = new ApplicationUser
+                {
+                    UserName = model.UserName, Email = model.Email,
+                    LastName = model.LastName, FirstName = model.FirstName, MiddleName = model.MiddleName
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     await UserManager.AddToRoleAsync(user.Id, GetRoleByCode(model.RoleCode));
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                     return RedirectToAction("Index", "Home");
                 }
+
                 AddErrors(result);
             }
-            
+
             return View(model);
         }
 
-        //
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]
         public async Task<ActionResult> ConfirmEmail(string userId, string code)
@@ -175,11 +162,11 @@ namespace Course.WEB.Controllers
             {
                 return View("Error");
             }
+
             var result = await UserManager.ConfirmEmailAsync(userId, code);
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
-        //
         // GET: /Account/ForgotPassword
         [AllowAnonymous]
         public ActionResult ForgotPassword()
@@ -187,7 +174,6 @@ namespace Course.WEB.Controllers
             return View();
         }
 
-        //
         // POST: /Account/ForgotPassword
         [HttpPost]
         [AllowAnonymous]
@@ -202,17 +188,16 @@ namespace Course.WEB.Controllers
                     return View("ForgotPasswordConfirmation");
                 }
             }
-            
+
             return View(model);
         }
-        
+
         [AllowAnonymous]
         public ActionResult ForgotPasswordConfirmation()
         {
             return View();
         }
 
-        //
         // GET: /Account/ResetPassword
         [AllowAnonymous]
         public ActionResult ResetPassword(string code)
@@ -220,7 +205,6 @@ namespace Course.WEB.Controllers
             return code == null ? View("Error") : View();
         }
 
-        //
         // POST: /Account/ResetPassword
         [HttpPost]
         [AllowAnonymous]
@@ -231,22 +215,24 @@ namespace Course.WEB.Controllers
             {
                 return View(model);
             }
+
             var user = await UserManager.FindByNameAsync(model.Email);
             if (user == null)
             {
                 // Don't reveal that the user does not exist
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
+
             AddErrors(result);
             return View();
         }
 
-        //
         // GET: /Account/ResetPasswordConfirmation
         [AllowAnonymous]
         public ActionResult ResetPasswordConfirmation()
@@ -254,7 +240,6 @@ namespace Course.WEB.Controllers
             return View();
         }
 
-        //
         // POST: /Account/ExternalLogin
         [HttpPost]
         [AllowAnonymous]
@@ -265,7 +250,6 @@ namespace Course.WEB.Controllers
             return new ChallengeResult(provider, Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl }));
         }
 
-        //
         // GET: /Account/SendCode
         [AllowAnonymous]
         public async Task<ActionResult> SendCode(string returnUrl, bool rememberMe)
@@ -275,12 +259,12 @@ namespace Course.WEB.Controllers
             {
                 return View("Error");
             }
+
             var userFactors = await UserManager.GetValidTwoFactorProvidersAsync(userId);
             var factorOptions = userFactors.Select(purpose => new SelectListItem { Text = purpose, Value = purpose }).ToList();
             return View(new SendCodeViewModel { Providers = factorOptions, ReturnUrl = returnUrl, RememberMe = rememberMe });
         }
 
-        //
         // POST: /Account/SendCode
         [HttpPost]
         [AllowAnonymous]
@@ -297,10 +281,10 @@ namespace Course.WEB.Controllers
             {
                 return View("Error");
             }
+
             return RedirectToAction("VerifyCode", new { Provider = model.SelectedProvider, ReturnUrl = model.ReturnUrl, RememberMe = model.RememberMe });
         }
 
-        //
         // GET: /Account/ExternalLoginCallback
         [AllowAnonymous]
         public async Task<ActionResult> ExternalLoginCallback(string returnUrl)
@@ -330,7 +314,6 @@ namespace Course.WEB.Controllers
             }
         }
 
-        //
         // POST: /Account/ExternalLoginConfirmation
         [HttpPost]
         [AllowAnonymous]
@@ -350,6 +333,7 @@ namespace Course.WEB.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
+
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
@@ -361,6 +345,7 @@ namespace Course.WEB.Controllers
                         return RedirectToLocal(returnUrl);
                     }
                 }
+
                 AddErrors(result);
             }
 
@@ -368,7 +353,6 @@ namespace Course.WEB.Controllers
             return View(model);
         }
 
-        //
         // POST: /Account/LogOff
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -378,7 +362,6 @@ namespace Course.WEB.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        //
         // GET: /Account/ExternalLoginFailure
         [AllowAnonymous]
         public ActionResult ExternalLoginFailure()
@@ -390,16 +373,16 @@ namespace Course.WEB.Controllers
         {
             if (disposing)
             {
-                if (_userManager != null)
+                if (userManager != null)
                 {
-                    _userManager.Dispose();
-                    _userManager = null;
+                    userManager.Dispose();
+                    userManager = null;
                 }
 
-                if (_signInManager != null)
+                if (signInManager != null)
                 {
-                    _signInManager.Dispose();
-                    _signInManager = null;
+                    signInManager.Dispose();
+                    signInManager = null;
                 }
             }
 
@@ -407,8 +390,6 @@ namespace Course.WEB.Controllers
         }
 
         #region Helpers
-        // Used for XSRF protection when adding external logins
-        private const string XsrfKey = "XsrfId";
 
         private string GetRoleByCode(string code)
         {
@@ -416,26 +397,23 @@ namespace Course.WEB.Controllers
             if (code != null)
             {
                 if (code == "sN34Gsg23WSdd")
+                {
                     role = "superAdmin";
+                }
                 else if (code == "Nrs09b2I9J21")
+                {
                     role = "admin";
+                }
             }
-            return role;
-        }
 
-        private IAuthenticationManager AuthenticationManager
-        {
-            get
-            {
-                return HttpContext.GetOwinContext().Authentication;
-            }
+            return role;
         }
 
         private void AddErrors(IdentityResult result)
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error);
+                ModelState.AddModelError(string.Empty, error);
             }
         }
 
@@ -445,6 +423,7 @@ namespace Course.WEB.Controllers
             {
                 return Redirect(returnUrl);
             }
+
             return RedirectToAction("Index", "Home");
         }
 
@@ -463,7 +442,9 @@ namespace Course.WEB.Controllers
             }
 
             public string LoginProvider { get; set; }
+
             public string RedirectUri { get; set; }
+
             public string UserId { get; set; }
 
             public override void ExecuteResult(ControllerContext context)
@@ -471,8 +452,9 @@ namespace Course.WEB.Controllers
                 var properties = new AuthenticationProperties { RedirectUri = RedirectUri };
                 if (UserId != null)
                 {
-                    properties.Dictionary[XsrfKey] = UserId;
+                    properties.Dictionary["XsrfId"] = UserId;
                 }
+
                 context.HttpContext.GetOwinContext().Authentication.Challenge(properties, LoginProvider);
             }
         }

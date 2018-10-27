@@ -1,23 +1,22 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Course.WEB.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
-using Course.WEB.Models;
-using Course.WEB.Models.Repositories;
 
 namespace Course.WEB.Controllers
 {
     [Authorize]
     public class ManageController : Controller
     {
-        private ApplicationSignInManager _signInManager;
-        private ApplicationUserManager _userManager;
+        private readonly EFUnitOfWork db = new EFUnitOfWork();
 
-        readonly EFUnitOfWork db = new EFUnitOfWork();
+        private ApplicationSignInManager signInManager;
+        private ApplicationUserManager userManager;
+
         public ManageController()
         {
         }
@@ -28,35 +27,45 @@ namespace Course.WEB.Controllers
             SignInManager = signInManager;
         }
 
+        public enum ManageMessageId
+        {
+            AddPhoneSuccess,
+            ChangePasswordSuccess,
+            SetTwoFactorSuccess,
+            SetPasswordSuccess,
+            RemoveLoginSuccess,
+            RemovePhoneSuccess,
+            Error
+        }
+
         public ApplicationSignInManager SignInManager
         {
             get
             {
-                return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
+                return signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+
+            private set
+            {
+                signInManager = value;
             }
         }
 
         public ApplicationUserManager UserManager
         {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
+            get { return userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>(); }
+            private set { userManager = value; }
         }
 
-        //
+        private IAuthenticationManager AuthenticationManager
+        {
+            get { return HttpContext.GetOwinContext().Authentication; }
+        }
+
         // GET: /Manage/Index
         public async Task<ActionResult> Index(string userId = "")
         {
-            userId = String.IsNullOrEmpty(userId) ? User.Identity.GetUserId() : userId;
+            userId = string.IsNullOrEmpty(userId) ? User.Identity.GetUserId() : userId;
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var userRatings = db.Ratings.Find(x => x.StudentId == userId)
                 .GroupBy(x => new { x.StudentId, x.TaskId }, (key, g) => g.OrderBy(e => e.DateOfSolution).FirstOrDefault()).ToList();
@@ -73,18 +82,6 @@ namespace Course.WEB.Controllers
             return View(model);
         }
 
-        private string GetRoleName(string role)
-        {
-            switch (role)
-            {
-                case "user": return "Студент";
-                case "admin": return "Преподаватель";
-                case "superAdmin": return "СтудГлавный преподаватель";
-                default: return "";
-            }
-        }
-
-        //
         // POST: /Manage/RemoveLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -99,23 +96,23 @@ namespace Course.WEB.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
+
                 message = ManageMessageId.RemoveLoginSuccess;
             }
             else
             {
                 message = ManageMessageId.Error;
             }
+
             return RedirectToAction("ManageLogins", new { Message = message });
         }
 
-        //
         // GET: /Manage/AddPhoneNumber
         public ActionResult AddPhoneNumber()
         {
             return View();
         }
 
-        //
         // POST: /Manage/AddPhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -125,6 +122,7 @@ namespace Course.WEB.Controllers
             {
                 return View(model);
             }
+
             // Generate the token and send it
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), model.Number);
             if (UserManager.SmsService != null)
@@ -136,10 +134,10 @@ namespace Course.WEB.Controllers
                 };
                 await UserManager.SmsService.SendAsync(message);
             }
+
             return RedirectToAction("VerifyPhoneNumber", new { PhoneNumber = model.Number });
         }
 
-        //
         // POST: /Manage/EnableTwoFactorAuthentication
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -151,10 +149,10 @@ namespace Course.WEB.Controllers
             {
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
+
             return RedirectToAction("Index", "Manage");
         }
 
-        //
         // POST: /Manage/DisableTwoFactorAuthentication
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -166,19 +164,19 @@ namespace Course.WEB.Controllers
             {
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
+
             return RedirectToAction("Index", "Manage");
         }
 
-        //
         // GET: /Manage/VerifyPhoneNumber
         public async Task<ActionResult> VerifyPhoneNumber(string phoneNumber)
         {
             var code = await UserManager.GenerateChangePhoneNumberTokenAsync(User.Identity.GetUserId(), phoneNumber);
+
             // Send an SMS through the SMS provider to verify the phone number
             return phoneNumber == null ? View("Error") : View(new VerifyPhoneNumberViewModel { PhoneNumber = phoneNumber });
         }
 
-        //
         // POST: /Manage/VerifyPhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -188,6 +186,7 @@ namespace Course.WEB.Controllers
             {
                 return View(model);
             }
+
             var result = await UserManager.ChangePhoneNumberAsync(User.Identity.GetUserId(), model.PhoneNumber, model.Code);
             if (result.Succeeded)
             {
@@ -196,14 +195,15 @@ namespace Course.WEB.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
+
                 return RedirectToAction("Index", new { Message = ManageMessageId.AddPhoneSuccess });
             }
+
             // If we got this far, something failed, redisplay form
-            ModelState.AddModelError("", "Failed to verify phone");
+            ModelState.AddModelError(string.Empty, "Failed to verify phone");
             return View(model);
         }
 
-        //
         // POST: /Manage/RemovePhoneNumber
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -214,22 +214,22 @@ namespace Course.WEB.Controllers
             {
                 return RedirectToAction("Index", new { Message = ManageMessageId.Error });
             }
+
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user != null)
             {
                 await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
             }
+
             return RedirectToAction("Index", new { Message = ManageMessageId.RemovePhoneSuccess });
         }
 
-        //
         // GET: /Manage/ChangePassword
         public ActionResult ChangePassword()
         {
             return View();
         }
 
-        //
         // POST: /Manage/ChangePassword
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -239,6 +239,7 @@ namespace Course.WEB.Controllers
             {
                 return View(model);
             }
+
             var result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword, model.NewPassword);
             if (result.Succeeded)
             {
@@ -247,20 +248,20 @@ namespace Course.WEB.Controllers
                 {
                     await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                 }
+
                 return RedirectToAction("Index", new { Message = ManageMessageId.ChangePasswordSuccess });
             }
+
             AddErrors(result);
             return View(model);
         }
 
-        //
         // GET: /Manage/SetPassword
         public ActionResult SetPassword()
         {
             return View();
         }
 
-        //
         // POST: /Manage/SetPassword
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -276,8 +277,10 @@ namespace Course.WEB.Controllers
                     {
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
                     }
+
                     return RedirectToAction("Index", new { Message = ManageMessageId.SetPasswordSuccess });
                 }
+
                 AddErrors(result);
             }
 
@@ -285,19 +288,19 @@ namespace Course.WEB.Controllers
             return View(model);
         }
 
-        //
         // GET: /Manage/ManageLogins
         public async Task<ActionResult> ManageLogins(ManageMessageId? message)
         {
             ViewBag.StatusMessage =
                 message == ManageMessageId.RemoveLoginSuccess ? "The external login was removed."
                 : message == ManageMessageId.Error ? "An error has occurred."
-                : "";
+                : string.Empty;
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             if (user == null)
             {
                 return View("Error");
             }
+
             var userLogins = await UserManager.GetLoginsAsync(User.Identity.GetUserId());
             var otherLogins = AuthenticationManager.GetExternalAuthenticationTypes().Where(auth => userLogins.All(ul => auth.AuthenticationType != ul.LoginProvider)).ToList();
             ViewBag.ShowRemoveButton = user.PasswordHash != null || userLogins.Count > 1;
@@ -308,7 +311,6 @@ namespace Course.WEB.Controllers
             });
         }
 
-        //
         // POST: /Manage/LinkLogin
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -318,39 +320,39 @@ namespace Course.WEB.Controllers
             return new AccountController.ChallengeResult(provider, Url.Action("LinkLoginCallback", "Manage"), User.Identity.GetUserId());
         }
 
-        //
         // GET: /Manage/LinkLoginCallback
         public async Task<ActionResult> LinkLoginCallback()
         {
-            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync(XsrfKey, User.Identity.GetUserId());
+            var loginInfo = await AuthenticationManager.GetExternalLoginInfoAsync("XsrfKey", User.Identity.GetUserId());
             if (loginInfo == null)
             {
                 return RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
             }
+
             var result = await UserManager.AddLoginAsync(User.Identity.GetUserId(), loginInfo.Login);
             return result.Succeeded ? RedirectToAction("ManageLogins") : RedirectToAction("ManageLogins", new { Message = ManageMessageId.Error });
         }
 
         protected override void Dispose(bool disposing)
         {
-            if (disposing && _userManager != null)
+            if (disposing && userManager != null)
             {
-                _userManager.Dispose();
-                _userManager = null;
+                userManager.Dispose();
+                userManager = null;
             }
 
             base.Dispose(disposing);
         }
 
-#region Helpers
-        // Used for XSRF protection when adding external logins
-        private const string XsrfKey = "XsrfId";
-
-        private IAuthenticationManager AuthenticationManager
+        #region Helpers
+        private string GetRoleName(string role)
         {
-            get
+            switch (role)
             {
-                return HttpContext.GetOwinContext().Authentication;
+                case "user": return "Студент";
+                case "admin": return "Преподаватель";
+                case "superAdmin": return "СтудГлавный преподаватель";
+                default: return string.Empty;
             }
         }
 
@@ -358,7 +360,7 @@ namespace Course.WEB.Controllers
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error);
+                ModelState.AddModelError(string.Empty, error);
             }
         }
 
@@ -369,6 +371,7 @@ namespace Course.WEB.Controllers
             {
                 return user.PasswordHash != null;
             }
+
             return false;
         }
 
@@ -379,20 +382,9 @@ namespace Course.WEB.Controllers
             {
                 return user.PhoneNumber != null;
             }
+
             return false;
         }
-
-        public enum ManageMessageId
-        {
-            AddPhoneSuccess,
-            ChangePasswordSuccess,
-            SetTwoFactorSuccess,
-            SetPasswordSuccess,
-            RemoveLoginSuccess,
-            RemovePhoneSuccess,
-            Error
-        }
-
 #endregion
     }
 }

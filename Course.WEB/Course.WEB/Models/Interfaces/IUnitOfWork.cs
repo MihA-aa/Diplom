@@ -1,11 +1,6 @@
-﻿using Course.WEB.Models;
+﻿using System;
 using Course.WEB.Models.Entities;
 using de = Course.WEB.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Course.WEB.Models.Interfaces
 {
@@ -17,7 +12,7 @@ namespace Course.WEB.Models.Interfaces
 
         IRepository<Rating> Ratings { get; }
 
-        IRepository<de.Task> Tasks { get; }
+        IRepository<Task> Tasks { get; }
 
         IRepository<Topic> Topics { get; }
 

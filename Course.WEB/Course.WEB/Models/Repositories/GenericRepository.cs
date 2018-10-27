@@ -1,19 +1,21 @@
-﻿using Course.WEB.Models.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using Course.WEB.Models.Interfaces;
 
 namespace Course.WEB.Models.Repositories
 {
-    public class GenericRepository<T> : IRepository<T> where T : class
+    public class GenericRepository<T> : IRepository<T>
+        where T : class
     {
-        ApplicationDbContext db;
-        DbSet<T> dbSet;
+        private ApplicationDbContext db;
+        private DbSet<T> dbSet;
+
         public GenericRepository(ApplicationDbContext context)
         {
-            this.db = context;
-            this.dbSet = context.Set<T>();
+            db = context;
+            dbSet = context.Set<T>();
         }
 
         public void Create(T item)
@@ -25,7 +27,9 @@ namespace Course.WEB.Models.Repositories
         {
             T item = dbSet.Find(id);
             if (item != null)
+            {
                 dbSet.Remove(item);
+            }
         }
 
         public IEnumerable<T> Find(Func<T, bool> predicate)
@@ -47,6 +51,7 @@ namespace Course.WEB.Models.Repositories
         {
             db.Entry(item).State = EntityState.Modified;
         }
+
         public int Count()
         {
             return dbSet.Count();

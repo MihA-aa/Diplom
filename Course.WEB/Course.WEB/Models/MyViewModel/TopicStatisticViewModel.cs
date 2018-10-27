@@ -1,5 +1,5 @@
-﻿using Course.WEB.Models.Entities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Course.WEB.Models.Entities;
 
 namespace Course.WEB.Models.MyViewModel
 {
@@ -10,7 +10,7 @@ namespace Course.WEB.Models.MyViewModel
         public TopicStatistic TopicStatistic { get; set; }
 
         public List<TaskStatistic> TasksStatistic { get; set; }
-        
+
         public List<StudentStatisticForTopic> StudentStatistics { get; set; }
     }
 }

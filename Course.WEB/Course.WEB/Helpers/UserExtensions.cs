@@ -9,6 +9,7 @@ namespace Course.WEB.Helpers
         {
             return creatorId == user.Identity.GetUserId() || user.IsInRole("superAdmin");
         }
+
         public static bool HasPermissionToCreate(this IPrincipal user)
         {
             return user.IsInRole("admin") || user.IsInRole("superAdmin");

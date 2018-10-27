@@ -4,7 +4,8 @@ namespace Course.WEB.Models.Repositories
 {
     public class RatingRepository : GenericRepository<Rating>
     {
-        public RatingRepository(ApplicationDbContext context) : base(context)
+        public RatingRepository(ApplicationDbContext context)
+            : base(context)
         {
         }
     }

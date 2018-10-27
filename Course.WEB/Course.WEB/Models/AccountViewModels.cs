@@ -18,8 +18,11 @@ namespace Course.WEB.Models
     public class SendCodeViewModel
     {
         public string SelectedProvider { get; set; }
+
         public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
+
         public string ReturnUrl { get; set; }
+
         public bool RememberMe { get; set; }
     }
 
@@ -31,6 +34,7 @@ namespace Course.WEB.Models
         [Required]
         [Display(Name = "Code")]
         public string Code { get; set; }
+
         public string ReturnUrl { get; set; }
 
         [Display(Name = "Remember this browser?")]
@@ -81,7 +85,7 @@ namespace Course.WEB.Models
         [StringLength(50, ErrorMessage = "Имя должно быть больше 3 и меньше 50 символов", MinimumLength = 3)]
         [Display(Name = "Имя")]
         public string FirstName { get; set; }
-        
+
         [StringLength(50, ErrorMessage = "Отчество должно быть больше 3 и меньше 50 символов", MinimumLength = 3)]
         [Display(Name = "Отчество")]
         public string MiddleName { get; set; }
@@ -95,7 +99,7 @@ namespace Course.WEB.Models
         [Display(Name = "Подтверждение пароля")]
         [Compare("Password", ErrorMessage = "Пароль и подтверждение пароля не совпадают")]
         public string ConfirmPassword { get; set; }
-        
+
         [Display(Name = "Код подтвержающий ваши права")]
         public string RoleCode { get; set; }
     }

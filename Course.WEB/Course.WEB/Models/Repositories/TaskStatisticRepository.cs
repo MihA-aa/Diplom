@@ -4,7 +4,8 @@ namespace Course.WEB.Models.Repositories
 {
     public class TaskStatisticRepository : GenericRepository<TaskStatistic>
     {
-        public TaskStatisticRepository(ApplicationDbContext context) : base(context)
+        public TaskStatisticRepository(ApplicationDbContext context)
+            : base(context)
         {
         }
     }
