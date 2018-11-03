@@ -56,29 +56,25 @@ $(document).ready(function () {
     });
 
 
-    projectionManager.getTasks().forEach(function (task, i) {
-        var list = $('.tasksList');
-        var template = list.children().first();
-        var listItem = template.clone();
-        listItem.text(task);
-        listItem.val(i);
-        listItem.show();
-        listItem.appendTo(list);
-    });
+	projectionManager.getTasks()
+		.then((task) => {
+				$('.taskText').append(task);
+		})
+		.catch(() => {});
 
-    $('.tasksList li').click(function () {
-        $('.tasksList li.active').removeClass('active');
-        $(this).addClass('active');
-        $('.taskText').text($(this).text());
-        projectionManager.testMode = true;
-    });
+    // $('.tasksList li').click(function () {
+    //     $('.tasksList li').removeClass('active');
+    //     $(this).addClass('active');
+    //     $('.taskText').text($(this).text());
+    //     projectionManager.testMode = true;
+    // });
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
     }
     $('.taskValidate').click(function () {
         $('.taskResultsPanel').show();
-        var index = parseInt($('.tasksList li.active').first().val());
-        var res = projectionManager.validateTask(index);
+        // var index = parseInt($('.tasksList li.active').first().val());
+        var res = projectionManager.validateTask();
         var items = $('.taskErrors>li:not(:first-child)').each(function () {
             $(this).remove();
         });
@@ -107,10 +103,16 @@ $(document).ready(function () {
     });
 
     $('.taskCancel').click(function () {
-        $('.taskResultsPanel').hide();
-        $('.tasksList li.active').removeClass('active');
-        $('.taskText').text('');
-        projectionManager.testMode = false;
+        history.back();
+    });
+
+    $('.taskFinish').click(function () {
+		var graphicTaskId = document.referrer.match("http:\/\/localhost:9847\/Graphic\\?taskId=([0-9]+)")[1];
+        var isSolved = projectionManager.validateTask().every(projection => projection.isValid);
+		$.ajax({
+			type: 'GET',
+			url: '../../Task/SolveGraphic?taskId=' + graphicTaskId + '&isSolved=' + isSolved,
+		  });
     });
 
 

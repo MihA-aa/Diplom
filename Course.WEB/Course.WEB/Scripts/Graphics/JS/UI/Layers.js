@@ -1,4 +1,4 @@
-$(document).ready(function () {
+window.onload = function () {
     var layoutPanel = $("#layoutPanel");
     var addLayout = $("#addLayout");
     var AllLayoutPanel = $("#AllLayoutPanel");
@@ -100,5 +100,5 @@ $(document).ready(function () {
         })
     }
     MainPoint();
-});
+};
 

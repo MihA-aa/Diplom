@@ -49,46 +49,44 @@
 <div>
     @for (int i = 0; i < Model.Disciplines.Count(); i++)
     {
-        if (User.HasPermissionToRedact(Model.Disciplines.ToList()[i].CreatorId))
+     <div style="position: relative;">
+        @if (User.HasPermissionToRedact(Model.Disciplines.ToList()[i].CreatorId))
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                using (Html.BeginForm("Edit", "Discipline", FormMethod.Get, new
+            <div style="right: 130px; position: absolute; margin-top: 1.5px;">
+                @using (Html.BeginForm("Edit", "Discipline", new { disciplineId = Model.Disciplines.ToList()[i].Id }, FormMethod.Get, new
                 {
-                    style = "display: inline-block; right: 310px; position: absolute; margin-top: 2px; "
+                    style = "display: inline-block;"
                 }))
                 {
-                    @Html.Hidden("disciplineId", Model.Disciplines.ToList()[i].Id)
                     <button type="submit" class="btn btn-default btn-mine"
                             style="padding: 0px 7px;">
                         <span class="glyphicon glyphicon-pencil" aria-hidden="true"
-                              style="font-size: 20px;"></span>
+                                style="font-size: 20px;"></span>
                     </button>
                 }
-                using (Html.BeginForm("DeleteDiscipline", "Home", new { disciplineId = Model.Disciplines.ToList()[i].Id }, FormMethod.Post, new
+                @using (Html.BeginForm("Delete", "Discipline", new { disciplineId = Model.Disciplines.ToList()[i].Id }, FormMethod.Post, new
                 {
-                    style = "display: inline-block; right: 270px; position: absolute; margin-top: 2px; "
+                    style = "display: inline-block;"
                 }))
                 {
                     <button type="submit" class="btn btn-default btn-mine"
                             style="padding: 0px 7px;">
-                        <span class="glyphicon glyphicon-remove" aria-hidden="true"
-                              style="font-size: 20px;"></span>
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"
+                                style="font-size: 20px;"></span>
                     </button>
                 }
-                using (Html.BeginForm("Create", "Course", FormMethod.Get, new
+                @using (Html.BeginForm("Create", "Course", new { disciplineId = Model.Disciplines.ToList()[i].Id }, FormMethod.Get, new
                 {
-                    style = "display: inline-block; right: 230px; position: absolute; margin-top: 2px; "
+                    style = "display: inline-block;"
                 }))
                 {
-                    @Html.Hidden("disciplineId", Model.Disciplines.ToList()[i].Id)
                     <button type="submit" class="btn btn-default btn-mine"
                             style="padding: 0px 7px;">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"
-                              style="font-size: 20px;"></span>
+                                style="font-size: 20px;"></span>
                     </button>
-                }
-            }
+                 }
+            </div>
         }
         <div class="item transition">
                 <h4 style="font-size: 15px; padding: 8px;">
@@ -99,16 +97,17 @@
         <div class="subItemList">
             @foreach (var course in Model.Disciplines.ToList()[i].Courses)
             {
-            <a href="@Url.Action("Get", "Course", new { courseId = course.Id }, null)"
-               style="text-decoration: none;">
-                <div class="subItem transition">
-                    <h4 style="font-size: 15px; padding: 8px;">
-                        @course.Name
-                    </h4>
-                </div>
-            </a>
+                <a href="@Url.Action("Get", "Course", new { courseId = course.Id }, null)"
+                    style="text-decoration: none;">
+                    <div class="subItem transition">
+                        <h4 style="font-size: 15px; padding: 8px;">
+                            @course.Name
+                        </h4>
+                    </div>
+                </a>
             }
         </div>
+     </div>
     }
 </div>
 

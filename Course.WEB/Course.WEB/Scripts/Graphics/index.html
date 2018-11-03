@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>Test PaperJS</title>
@@ -66,17 +66,17 @@
         </div>
         <ul class="nav navbar-nav navbar-left">
             <li>
-                <button class="btn btn-danger navbar-btn bouton-image monBouton " id="mainSettings"> Main</button>
+                <button class="btn btn-danger navbar-btn bouton-image monBouton " id="mainSettings"> Главная</button>
             </li>
             <li>
-                <button class="btn btn-danger navbar-btn bouton-image monBouton " id="bindingSettings"> Binding</button>
+                <button class="btn btn-danger navbar-btn bouton-image monBouton " id="bindingSettings"> Привязки</button>
             </li>
             <li>
-                <button class="btn btn-danger navbar-btn bouton-image monBouton " id="gridSettings"> Grid</button>
+                <button class="btn btn-danger navbar-btn bouton-image monBouton " id="gridSettings"> Сетка</button>
             </li>
             <li>
                 <button class="btn btn-danger navbar-btn bouton-image monBouton " id="projectionsSettings">
-                    Projections
+                    Задание
                 </button>
             </li>
         </ul>
@@ -233,25 +233,25 @@
 <div class="container-fluid tabContent" hidden="true" data-nav-id="gridSettings">
     <div class="tabPanel col-lg-1">
         <div class="checkbox tabControl">
-            <label><input type="checkbox" data-setting="background.showGrid">Draw grid</label>
+            <label><input type="checkbox" data-setting="background.showGrid">Рисовать сетку</label>
         </div>
         <div class="checkbox tabControl">
-            <label><input type="checkbox" data-setting="background.showAxis">Draw axis</label>
+            <label><input type="checkbox" data-setting="background.showAxis">Рисовать оси</label>
         </div>
     </div>
     <div class="tabPanel col-lg-2">
         <div id="gridColorPicker" class="input-group colorpicker-component tabControl"
              data-setting="background.gridColor">
-            <label class="btn btn-secondary">Grid color</label>
+            <label class="btn btn-secondary">Цвет сетки</label>
             <span class="input-group-addon"><i></i></span>
         </div>
         <div id="gridColorAxis" class="input-group colorpicker-component tabControl"
              data-setting="background.axisColor">
-            <label class="btn btn-secondary">Axis color</label>
+            <label class="btn btn-secondary">Цвет осей</label>
             <span class="input-group-addon"><i></i></span>
         </div>
         <div class="input-group tabControlRow">
-            <label class="btn btn-secondary">Grid step</label>
+            <label class="btn btn-secondary">Шаг сетки</label>
             <input type="number" class="form-control" data-setting="binding.gridStep">
         </div>
     </div>
@@ -261,26 +261,25 @@
 <div class="container-fluid tabContent" hidden="true" data-nav-id="projectionsSettings">
     <div class="tabPanel col-lg-3">
         <div class="checkbox tabControl">
-            <label><input type="checkbox" data-setting="projections.showPointText">Show point captions</label>
+            <label><input type="checkbox" data-setting="projections.showPointText">Показать подписи для точек</label>
         </div>
         <div class="checkbox tabControl">
-            <label><input type="checkbox" data-setting="projections.showLinkLines">Show projection lines</label>
+            <label><input type="checkbox" data-setting="projections.showLinkLines">Показать проекционные линии</label>
         </div>
         <div class="checkbox tabControl">
-            <label><input type="checkbox" data-setting="background.threeAxis">3D axis</label>
+            <label><input type="checkbox" data-setting="background.threeAxis">Трехмерная ось</label>
         </div>
         <div class="checkbox tabControl">
-            <label><input type="checkbox" data-setting="background.showAxisText">Show axis captions</label>
+            <label><input type="checkbox" data-setting="background.showAxisText">Показывать подписи для осей</label>
         </div>
     </div>
     <div class="tabPanel col-lg-3" >
-        <button class="btn btn-primary dropdown-toggle tabControl " type="button" data-toggle="dropdown">Tasks
-            <span class="caret"></span></button>
-        <button class="taskValidate tabControl btn btn-primary">Check</button>
-        <button class="taskCancel tabControl btn btn-primary">Cancel</button>
-        <ul class="dropdown-menu tasksList tabControl">
+        <button class="taskValidate tabControl btn btn-primary">Проверить</button>
+        <button class="taskCancel tabControl btn btn-primary">Отмена</button>
+        <button class="taskFinish tabControl btn btn-primary">Закончить решение</button>
+        <!-- <ul class="dropdown-menu tasksList tabControl">
             <li style="display:none"></li>
-        </ul>
+        </ul> -->
         <div class="taskText"></div>
     </div>
     <div class="tabPanel col-lg-3 taskResultsPanel">
@@ -364,7 +363,7 @@
     var stylesManager = new StylesManager(mediator, settingsManager.settings.styles, settingsManager.settings.textStyles);
     var projectionPointsDrawer = new ProjectionPointsDrawer(mediator, stylesManager, settingsManager.settings.projections);
     var projectionManager = new ProjectionManager(mediator, projectionPointsDrawer, stylesManager, settingsManager.settings.projections);
-    window.onload = function () {
+    $(document).ready(function () {
         paper.setup('myCanvas');
         layerManager = new Layers(mediator);
 
@@ -409,7 +408,7 @@
                 event.preventDefault();
             }
         });
-    }
+    });
 
 </script>
 </body>

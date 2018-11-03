@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Course.WEB.Models.Entities.Graphics;
 using Course.WEB.Models.Interfaces;
 
 namespace Course.WEB.Models.Entities
@@ -47,6 +48,13 @@ namespace Course.WEB.Models.Entities
         public string CreatorId { get; set; }
 
         public virtual ApplicationUser Creator { get; set; }
+
+        [Display(Name = "Графическая задача")]
+        public bool IsGraphicTask { get; set; }
+
+        public int? GraphicTaskId { get; set; }
+
+        public virtual GraphicTask GraphicTask { get; set; }
 
         public Dictionary<string, string> GetProperties()
         {

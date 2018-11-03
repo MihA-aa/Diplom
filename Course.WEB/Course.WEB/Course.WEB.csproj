@@ -205,6 +205,10 @@
     <Compile Include="Controllers\TaskController.cs" />
     <Compile Include="Helpers\UserExtensions.cs" />
     <Compile Include="Helpers\StringExtension.cs" />
+    <Compile Include="Models\Entities\Graphics\Enums\Shapes.cs" />
+    <Compile Include="Models\Entities\Graphics\Point3D.cs" />
+    <Compile Include="Models\Entities\Graphics\Projection.cs" />
+    <Compile Include="Models\Entities\Graphics\GraphicTask.cs" />
     <Compile Include="Models\Entities\StudentStatistic.cs" />
     <Compile Include="Models\Entities\TaskStatistic.cs" />
     <Compile Include="Models\Entities\TopicStatistic.cs" />
@@ -234,12 +238,18 @@
     <Compile Include="Models\Repositories\GenericRepository.cs" />
     <Compile Include="Models\Repositories\RatingRepository.cs" />
     <Compile Include="Models\Repositories\StudentStatisticRepository.cs" />
+    <Compile Include="Models\Repositories\GraphicTaskRepository.cs" />
     <Compile Include="Models\Repositories\TaskRepository.cs" />
     <Compile Include="Models\Repositories\TaskStatisticRepository.cs" />
     <Compile Include="Models\Repositories\TopicRepository.cs" />
     <Compile Include="Models\Repositories\TopicStatisticRepository.cs" />
     <Compile Include="Models\Repositories\UserRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Content.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Content.resx</DependentUpon>
+    </Compile>
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -391,6 +401,7 @@
     <Content Include="Content\DataTables\images\sort_desc_disabled.png" />
     <Content Include="Content\DataTables\swf\flashExport.swf" />
     <Compile Include="Controllers\GraphicController.cs" />
+    <Content Include="Content\jquery-ui.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -400,6 +411,7 @@
     <Content Include="Content\DataTables\css\semanticui.scss" />
     <Content Include="Content\DataTables\css\mixins.scss" />
     <Content Include="Content\DataTables\css\common.scss" />
+    <Content Include="Scripts\Custom\CreateTask.js" />
     <Content Include="Scripts\Graphics\.idea\Graphics.iml" />
     <Content Include="Scripts\Graphics\CSS\bootstrap-theme.css.map" />
     <Content Include="Scripts\Graphics\CSS\bootstrap-theme.min.css.map" />
@@ -545,6 +557,7 @@
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -622,6 +635,12 @@
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.0.2\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Content.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Content.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

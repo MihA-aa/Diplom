@@ -143,13 +143,20 @@ function Projection(shape, points3D) {
                     yz: yz ? true : false
                 });
             if (xy && xz && yz) {
-                this.points3D.splice(this.points3D.indexOf(xy), 1);
-                this.points3D.splice(this.points3D.indexOf(xz), 1);
-                this.points3D.splice(this.points3D.indexOf(yz), 1);
-                this.points3D.push(new Point3D(taskPoint.x, taskPoint.y, taskPoint.z));
+                // this.points3D.splice(this.points3D.indexOf(xy), 1);
+                // this.points3D.splice(this.points3D.indexOf(xz), 1);
+                // this.points3D.splice(this.points3D.indexOf(yz), 1);
+                // this.points3D.push(new Point3D(taskPoint.x, taskPoint.y, taskPoint.z));
             }
-        }.bind(this));
+		}.bind(this));
+		result.isValid = this.isAllTasksValid(result.points);
         return result;
+	}
+	
+    this.isAllTasksValid = function (points) {
+		return points.every(function (point) {
+			return point.xy && point.xz && point.yz;
+		});
     }
 
     this.mergePoints = function (from, to) {

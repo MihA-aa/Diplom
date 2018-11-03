@@ -1,7 +1,7 @@
 function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, projectionParams) {
     this.projections = [];
     this.graphics = [];
-    this.testMode = false;
+    this.testMode = true;
     this.tasks = [
         [
             {
@@ -33,12 +33,28 @@ function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, proj
                 return true;
             }
         });
-    };
+	};
 
     this.getTasks = function () {
-        return this.tasks.map(function (t) {
-            return this.getTaskText(t);
-        }.bind(this));
+		var matches = document.referrer.match("http:\/\/localhost:9847\/Graphic\\?taskId=([0-9]+)");
+		var graphicTaskId = matches && matches[0]
+		var projectionManager = this;
+		if(graphicTaskId){
+			return new Promise(function(resolve) {
+				$.ajax({
+					type: 'GET',
+					url: '../../Graphic/Get?taskId=' + graphicTaskId,
+					success: function(data){
+						projectionManager.tasks = data.Projections.map(function (projection) {
+							return mapProjection(projection);
+						});
+						resolve(projectionManager.getTaskText(projectionManager.tasks));
+					}
+				});
+			});
+		} else {
+			return new Promise(function(resolve, reject) { reject});
+		}
     };
     var shapeNames =
         {
@@ -53,7 +69,7 @@ function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, proj
             line: 'отрезка',
             polygon: 'многоугольника',
             ellipse: 'эллипса',
-        };
+		};
     this.getTaskText = function (task) {
         var result = "";
         result += 'Построить ';
@@ -153,11 +169,10 @@ function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, proj
     };
 
     this.validateTask = function (taskIndex) {
-        var task = this.tasks[taskIndex];
         var results = [];
         var resolvedProjections = [];
         var unresolvedProjections = this.projections.slice(0);
-        var unresolvedTasks = task.filter(function (taskproj) {
+        var unresolvedTasks = this.tasks.filter(function (taskproj) {
             var match = unresolvedProjections.find(function (p) {
                 return p.getMatches(taskproj) == taskproj.projection.points3D.length * 3 && p.shape === taskproj.projection.shape && p.points3D.length == taskproj.projection.points3D.length * 3;
             });
@@ -221,3 +236,19 @@ function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, proj
         )
     }
 }
+
+function mapProjection(projection) {
+	projection.shape = mapShape(projection.Shape);
+	var point = projection.Points[0]
+	return {
+		projection: new Projection(projection.shape, [new Point3D(point.X, point.Y, point.Z)]),
+	}
+}
+
+function mapShape(shape) {
+	switch (shape) {
+		case 0: return "point";
+		case 1: return "line";
+		case 2: return "polygon";
+		case 3: return "ellipse";
+}}

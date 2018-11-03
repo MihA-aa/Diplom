@@ -31,7 +31,7 @@
 else
 {
 <h3 style="margin: 10px; margin-bottom: 15px;">Курсы по дисциплине: </h3>
-<div>
+<div style="position: relative;">
     @for (int i = 0; i < Model.Courses.Count(); i++)
     {
         <a href="@Url.Action("Get", "Course", new { courseId = Model.Courses.ToList()[i].Id }, null)"
@@ -44,7 +44,7 @@ else
         </a>
         if (User.HasPermissionToRedact(Model.Courses.ToList()[i].Creator.Id))
         {
-            <div style="right: 235px; position: absolute; margin-top: -40px;">
+            <div style="right: 135px; position: absolute; margin-top: -40px;">
             @using (Html.BeginForm("Edit", "Course", FormMethod.Get, new
             {
                 style = "display: inline-block; margin-right: 5px;"
@@ -64,7 +64,7 @@ else
             {
                 <button type="submit" class="btn btn-default btn-mine"
                         style="padding: 0px 7px;">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"
                           style="font-size: 20px;"></span>
                 </button>
             }

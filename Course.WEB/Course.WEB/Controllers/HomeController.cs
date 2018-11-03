@@ -14,7 +14,7 @@ namespace Course.WEB.Controllers
         {
             var viewModel = new HomePageViewModel
             {
-                Disciplines = db.Disciplines.GetAll().ToList(),
+                Disciplines = db.Disciplines.GetAll().OrderBy(x => x.Order).ToList(),
                 CountOfCourses = db.Courses.Count(),
                 CountOfTopics = db.Topics.Count(),
                 CountOfTasks = db.Tasks.Count(),

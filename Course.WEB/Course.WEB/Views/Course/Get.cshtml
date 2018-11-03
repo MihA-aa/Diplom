@@ -25,7 +25,7 @@ else
         {
             <div style="background: #f7f3ef; margin: 10px; padding: 10px; margin-right: 100px">
                 <div>
-                    <h4>
+                    <h4 style="position: relative;">
                         <a href="@Url.Action("Get", "Topic", new { topicId = Model.Course.Topics.ToList()[i].Id }, null)">
                             @(i + 1). @Model.Course.Topics.ToList()[i].Name
                         </a>
@@ -45,12 +45,12 @@ else
                             }
                             using (Html.BeginForm("Delete", "Topic", new { topicId = Model.Course.Topics.ToList()[i].Id }, FormMethod.Post, new
                             {
-                                style = "display: inline-block;right: 215px; position: absolute; margin-top: -10px; "
+                                style = "display: inline-block;right: 5px; position: absolute; margin-top: -10px; "
                             }))
                             {
                                 <button type="submit" class="btn btn-default btn-mine"
                                         style="padding: 0px 7px;">
-                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"
                                           style="font-size: 20px;"></span>
                                 </button>
                             }

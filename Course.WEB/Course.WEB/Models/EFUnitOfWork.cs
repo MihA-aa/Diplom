@@ -1,5 +1,6 @@
 ﻿using System;
 using Course.WEB.Models.Entities;
+using Course.WEB.Models.Entities.Graphics;
 using Course.WEB.Models.Interfaces;
 using Course.WEB.Models.Repositories;
 using de = Course.WEB.Models.Entities;
@@ -17,6 +18,7 @@ namespace Course.WEB.Models
         private TaskStatisticRepository taskStatisticRepository;
         private StudentStatisticRepository studentStatisticRepository;
         private TopicStatisticRepository topicStatisticRepository;
+        private GraphicTaskRepository graphicTaskRepository;
         private bool disposed;
 
         public EFUnitOfWork()
@@ -39,6 +41,8 @@ namespace Course.WEB.Models
         public IRepository<StudentStatistic> StudentStatistics => studentStatisticRepository ?? (studentStatisticRepository = new StudentStatisticRepository(db));
 
         public IRepository<TopicStatistic> TopicStatistics => topicStatisticRepository ?? (topicStatisticRepository = new TopicStatisticRepository(db));
+
+        public IRepository<GraphicTask> GraphicTasks => graphicTaskRepository ?? (graphicTaskRepository = new GraphicTaskRepository(db));
 
         public void Save()
         {

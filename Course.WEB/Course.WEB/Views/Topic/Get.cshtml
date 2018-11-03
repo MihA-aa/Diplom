@@ -47,44 +47,40 @@ else
     {
         <div style ="background: #f7f3ef; margin: 10px; padding: 10px; margin-right: 100px">
             <div>
-                <h4><a href="@Url.Action("Solve", "Task", new { taskId = Model.Topic.Tasks.ToList()[i].Id }, null)">
-                    @(i + 1). @Model.Topic.Tasks.ToList()[i].Name</a>
-                @if (User.HasPermissionToRedact(Model.Topic.Tasks.ToList()[i].CreatorId))
-                {
-                    using (Html.BeginForm("Edit", "Task", FormMethod.Get, new
+                <h4 style="position: relative;">
+                    <a href="@Url.Action("Solve", "Task", new {taskId = Model.Topic.Tasks.ToList()[i].Id}, null)">
+                        @(i + 1). @Model.Topic.Tasks.ToList()[i].Name
+						@if(Model.Topic.Tasks.ToList()[i].IsGraphicTask){
+							<span class="glyphicon glyphicon-picture" aria-hidden="true" style="font-size: 20px;"></span>
+						}
+					</a>
+                    @if (User.HasPermissionToRedact(Model.Topic.Tasks.ToList()[i].CreatorId))
                     {
-                        style = "display: inline-block; margin-right: 5px;"
-                    }))
-                    {
-                        @Html.Hidden("taskId", Model.Topic.Tasks.ToList()[i].Id)
-                        <button type="submit" class="btn btn-default btn-mine"
-                                style="padding: 0px 7px;">
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true" 
-                                  style="font-size: 20px;"></span>
-                        </button>
+                        using (Html.BeginForm("Edit", "Task", FormMethod.Get, new
+                        {
+                            style = "display: inline-block; margin-right: 5px;"
+                        }))
+                        {
+                            @Html.Hidden("taskId", Model.Topic.Tasks.ToList()[i].Id)
+                            <button type="submit" class="btn btn-default btn-mine"
+                                    style="padding: 0px 7px;">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"
+                                      style="font-size: 20px;"></span>
+                            </button>
+                        }
+                        using (Html.BeginForm("Delete", "Task", new {taskId = Model.Topic.Tasks.ToList()[i].Id}, FormMethod.Post, new
+                        {
+                            style = "display: inline-block;right: 5px; position: absolute; margin-top: -10px; "
+                        }))
+                        {
+                            <button type="submit" class="btn btn-default btn-mine"
+                                    style="padding: 0px 7px;">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"
+                                      style="font-size: 20px;"></span>
+                            </button>
+                        }
                     }
-                    using (Html.BeginForm("Get", "Graphic", FormMethod.Get, new
-                    {
-                        style = "display: inline-block; margin-right: 5px;"
-                    }))
-                    {
-                        <button type="submit" class="btn btn-default btn-mine"
-                                style="padding: 0px 7px;">
-                            Решить на графике
-                        </button>
-                    }
-                    using (Html.BeginForm("Delete", "Task", new { taskId = Model.Topic.Tasks.ToList()[i].Id }, FormMethod.Post, new
-                    {
-                        style = "display: inline-block;right: 215px; position: absolute; margin-top: -10px; "
-                    }))
-                    {
-                        <button type="submit" class="btn btn-default btn-mine"
-                                style="padding: 0px 7px;">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"
-                                  style="font-size: 20px;"></span>
-                        </button>
-                    }
-                }</h4>
+                </h4>
             </div>
             <div>
                 @Model.Topic.Tasks.ToList()[i].Condition

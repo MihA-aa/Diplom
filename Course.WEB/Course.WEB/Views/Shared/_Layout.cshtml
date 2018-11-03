@@ -52,11 +52,12 @@
     </div>
 
     @Scripts.Render("~/bundles/jquery")
-        @Scripts.Render("~/bundles/bootstrap")
-            @Scripts.Render("~/bundles/jtable")
-            @Scripts.Render("~/bundles/jqueryval")
-
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryUi")
+    @Scripts.Render("~/bundles/jtable")
+    @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/scripts/jquery.unobtrusive-ajax.min.js")
+    @Scripts.Render("~/Custom")
     @RenderSection("scripts", required: false)
 </body>
 </html>

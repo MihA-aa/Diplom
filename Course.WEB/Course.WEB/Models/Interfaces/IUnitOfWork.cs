@@ -1,5 +1,6 @@
 ﻿using System;
 using Course.WEB.Models.Entities;
+using Course.WEB.Models.Entities.Graphics;
 using de = Course.WEB.Models.Entities;
 
 namespace Course.WEB.Models.Interfaces
@@ -15,6 +16,8 @@ namespace Course.WEB.Models.Interfaces
         IRepository<Task> Tasks { get; }
 
         IRepository<Topic> Topics { get; }
+
+        IRepository<GraphicTask> GraphicTasks { get; }
 
         void Save();
     }

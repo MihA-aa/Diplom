@@ -3,6 +3,8 @@ using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Course.WEB.Models.Entities;
+using Course.WEB.Models.Entities.Graphics;
+using Course.WEB.Models.Entities.Graphics.Enums;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using de = Course.WEB.Models.Entities;
@@ -65,6 +67,12 @@ namespace Course.WEB.Models
         public DbSet<StudentStatistic> StudentStatistics { get; set; }
 
         public DbSet<TopicStatistic> TopicStatistics { get; set; }
+
+        public DbSet<GraphicTask> GraphicTasks { get; set; }
+
+        public virtual DbSet<Projection> Projections { get; set; }
+
+        public virtual DbSet<Point3D> Points { get; set; }
 
         public static ApplicationDbContext Create()
         {
@@ -136,11 +144,12 @@ namespace Course.WEB.Models
 
             #endregion
             #region Disciplines
-            db.Disciplines.Add(new Discipline { Id = 1, Name = "Математика", Description = "Математика - самая главная дисциплина среди всех.." });
-            db.Disciplines.Add(new Discipline { Id = 2, Name = "Физика", Description = "Физика - самая главная дисциплина среди всех.." });
-            db.Disciplines.Add(new Discipline { Id = 3, Name = "Экономика", Description = "Экономика - самая главная дисциплина среди всех.." });
-            db.Disciplines.Add(new Discipline { Id = 4, Name = "Химия", Description = "Химия - самая главная дисциплина среди всех.." });
-            db.Disciplines.Add(new Discipline { Id = 5, Name = "Программирование", Description = "Программирование - самая главная дисциплина среди всех.." });
+            db.Disciplines.Add(new Discipline { Id = 1, Name = "Математика", Description = "Математика - самая главная дисциплина среди всех..", Order = 2 });
+            db.Disciplines.Add(new Discipline { Id = 2, Name = "Физика", Description = "Физика - самая главная дисциплина среди всех..", Order = 3 });
+            db.Disciplines.Add(new Discipline { Id = 3, Name = "Экономика", Description = "Экономика - самая главная дисциплина среди всех..", Order = 4 });
+            db.Disciplines.Add(new Discipline { Id = 4, Name = "Химия", Description = "Химия - самая главная дисциплина среди всех..", Order = 5 });
+            db.Disciplines.Add(new Discipline { Id = 5, Name = "Программирование", Description = "Программирование - самая главная дисциплина среди всех..", Order = 6 });
+            db.Disciplines.Add(new Discipline { Id = 6, Name = "Начертательная геометрия", Description = Resources.Content.GeometryDisciplineDescription, Order = 1 });
             #endregion
             #region Courses
             db.Courses.Add(new de.Course
@@ -220,6 +229,14 @@ namespace Course.WEB.Models
                 Id = 15, Name = "Модульное тестирование", DisciplineId = 5, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
             Description = "Этот курс предназначен для тренировки решения задач по теме Модульное тестирование"
             });
+            db.Courses.Add(new de.Course
+            {
+                Id = 16,
+                Name = "Проецирование точки",
+                DisciplineId = 6,
+                CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Description = Resources.Content.PointCourseDescription
+            });
             #endregion
             #region Topics
             db.Topics.Add(new Topic
@@ -287,6 +304,40 @@ namespace Course.WEB.Models
                 CourseId = 4, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
                 Description = "Некоторое описание Статистическая физика"
             });
+            db.Topics.Add(new Topic
+            {
+                Id = 10,
+                Name = "Построение формальной проекции 3D точки",
+                PlannedComplexity = 0.2m,
+                CourseId = 16,
+                CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Description = "Некоторое описание построения формальной проекции 3D точки"
+            });
+            #endregion
+            #region GraphicTasks
+            db.GraphicTasks.Add(new GraphicTask
+            {
+                Id = 1,
+                Condition = "Запсать координаты горизонтальной проекции",
+                Projections = new List<Projection>
+                {
+                    new Projection
+                    {
+                        Id = 1,
+                        Shape = Shapes.Point,
+                        Points = new List<Point3D>
+                        {
+                            new Point3D
+                            {
+                                Id = 1,
+                                X = 90,
+                                Y = 90,
+                                Z = 90,
+                            }
+                        }
+                    }
+                }
+            });
             #endregion
             #region Tasks
             db.Tasks.Add(new de.Task
@@ -294,42 +345,64 @@ namespace Course.WEB.Models
                 Id = 1, PlannedComplexity = 7.7m,
                 PlannedTime = 300, Answer = "κ*π/5+π/10", Name = "Задача 1.1", Condition = "tg3x=1/tg2x. Чему равен x?",
                 PeriodicityOfRequirement = 1.2m, PeriodicityOfVisiting = 4.1m, TopicId = 1, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
-                Weight = 1
+                Weight = 1,
+                IsGraphicTask = false
             });
             db.Tasks.Add(new de.Task
             {
                 Id = 2, PlannedComplexity = 2.57m,
                 PlannedTime = 220, Answer = "√2/3", Name = "Задача 1.2", Condition = "Вычислить sin(-585°+α).",
                 PeriodicityOfRequirement = 5.1m, PeriodicityOfVisiting = 7.1m, TopicId = 1, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
-                Weight = 2
+                Weight = 2,
+                IsGraphicTask = false
             });
             db.Tasks.Add(new de.Task
             {
                 Id = 3, PlannedComplexity = 5.2m,
                 PlannedTime = 140, Answer = "nπ+(−1)^n*π6", Name = "Задача 1.3", Condition = "Решить уравнение (cosx)^2+sinx=5/4",
                 PeriodicityOfRequirement = 8.1m, PeriodicityOfVisiting = 5.1m, TopicId = 1, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
-                Weight = 4
+                Weight = 4,
+                IsGraphicTask = false
             });
             db.Tasks.Add(new de.Task
             {
                 Id = 4, PlannedComplexity = 3.1m,
                 PlannedTime = 500, Answer = "arctg3/2 + πn", Name = "Задача 2.1", Condition = "2 sin x – 3 cos x = 0. Чему равен x?",
                 PeriodicityOfRequirement = 2.1m, PeriodicityOfVisiting = 3.4m, TopicId = 2, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
-                Weight = 3
+                Weight = 3,
+                IsGraphicTask = false
             });
             db.Tasks.Add(new de.Task
             {
                 Id = 5, PlannedComplexity = 2.95m,
                 PlannedTime = 195, Answer = "√2/3", Name = "Задача 2.2", Condition = "(sinx)^2 – 3*sinx*cos x + 2(cosx)^2 = 0. Чему равен x?",
                 PeriodicityOfRequirement = 2.5m, PeriodicityOfVisiting = 9.3m, TopicId = 2, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
-                Weight = 5
+                Weight = 5,
+                IsGraphicTask = false
             });
             db.Tasks.Add(new de.Task
             {
                 Id = 6, PlannedComplexity = 1.77m,
                 PlannedTime = 410, Answer = "-arctg(2)+πk", Name = "Задача 2.3", Condition = "sinx + 2cosx = 0. Чему равен x?",
                 PeriodicityOfRequirement = 1.1m, PeriodicityOfVisiting = 0.2m, TopicId = 2, CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
-                Weight = 7
+                Weight = 7,
+                IsGraphicTask = false
+            });
+            db.Tasks.Add(new de.Task
+            {
+                Id = 7,
+                PlannedComplexity = 1.77m,
+                PlannedTime = 410,
+                Answer = "-arctg(2)+πk",
+                Name = "Задача 1.1",
+                Condition = "Запсать координаты горизонтальной проекции",
+                PeriodicityOfRequirement = 1.1m,
+                PeriodicityOfVisiting = 0.2m,
+                TopicId = 10,
+                CreatorId = "65c13a33-5a3e-450c-bd46-503f878e929d",
+                Weight = 7,
+                IsGraphicTask = true,
+                GraphicTaskId = 1
             });
             #endregion
 

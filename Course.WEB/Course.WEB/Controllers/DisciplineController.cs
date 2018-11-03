@@ -85,5 +85,30 @@ namespace Course.WEB.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpPost]
+        public ActionResult Delete(int? disciplineId)
+        {
+            if (disciplineId == null)
+            {
+                return HttpNotFound();
+            }
+
+            var discipline = db.Disciplines.Get(disciplineId.Value);
+            if (discipline == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (!User.HasPermissionToRedact(discipline.CreatorId))
+            {
+                return HttpNotFound();
+            }
+
+            db.Disciplines.Delete(disciplineId.Value);
+            db.Save();
+
+            return Redirect(ControllerContext.HttpContext.Request.UrlReferrer.ToString());
+        }
     }
 }

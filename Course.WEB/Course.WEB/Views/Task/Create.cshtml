@@ -3,12 +3,55 @@
 @{
     ViewBag.Title = "Создание задачи для темы " + ViewBag.Topic;
 }
+<style>
+    .isGraphic {
+        margin-left: 5px;
+    }
+
+    .ordinate {
+        display: inline;
+        margin-left: 10px;
+    }
+
+    .projection-type {
+        margin-bottom: 10px;
+        margin-left: 30px;
+		float: left;
+    }
+
+    .graphic-form {
+        display: none;
+    }
+    #add-projection {
+        float: left;
+    }
+    #delete-projection {
+        margin-left: 10px;
+    }
+	.projection{
+		border: 1px solid #ccc!important;
+		padding: 15px;
+		margin: 10px;
+		width: 380px;
+		position: relative;
+	}
+	.points{
+    	clear: both;
+	}
+	iframe{
+		height: 800; width: 1500px;
+	}
+	.ui-widget-content {
+		min-width: 1500px !important;
+		min-height: 800px !important;
+	}
+</style>
 
 <h2>@ViewBag.Title</h2>
 
 <div id="infaCreate">
     @using (Html.BeginForm("Create", "Task", FormMethod.Post, new { style = "" }))
-            {
+    {
         @Html.ValidationSummary(true)
         @Html.HiddenFor(model => model.Id)
         @Html.Hidden("CreatorId", User.Identity.GetUserId())
@@ -16,59 +59,84 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Name)
             @Html.EditorFor(model => model.Name, new
-       {
-           htmlAttributes = new { @class = "form-control", placeholder = "Задача №4.21" },
-       })
+            {
+                htmlAttributes = new { @class = "form-control", placeholder = "Задача №4.21" },
+            })
             @Html.ValidationMessageFor(model => model.Name)
         </div>
         <div class="form-group">
+            @Html.LabelFor(model => model.IsGraphicTask)
+            @Html.EditorFor(model => model.IsGraphicTask, new
+            {
+                htmlAttributes = new { @class = "isGraphic" },
+            })
+        </div>
+        <div class="graphic-form">
+			<div>
+				<div class="form-group">
+					<button id="add-projection" type=button class="btn btn-primary">Добавить проекцию</button>
+				</div>
+				<div class="form-group">
+					<button id="delete-projection" type=button class="btn btn-warning">Удалить проекцию</button>
+				</div>
+			</div>
+            <div id="projections">
+            </div>
+        </div>
+        <div class="form-group">
             @Html.LabelFor(model => model.Condition)
-            @Html.TextAreaFor(model => model.Condition, 5, 50, new { @class = "form-control"})
+            @Html.TextAreaFor(model => model.Condition, 5, 50, new { @class = "form-control" })
             @Html.ValidationMessageFor(model => model.Condition)
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Answer)
             @Html.EditorFor(model => model.Answer, new
-       {
-           htmlAttributes = new { @class = "form-control", placeholder = "-arctg(2)+πk" },
-       })
+            {
+                htmlAttributes = new { @class = "form-control", placeholder = "-arctg(2)+πk" },
+            })
             @Html.ValidationMessageFor(model => model.Answer)
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.Weight)
             @Html.EditorFor(model => model.Weight, new
-       {
-           htmlAttributes = new { @class = "form-control", placeholder = "2" },
-       })
+            {
+                htmlAttributes = new { @class = "form-control", placeholder = "2" },
+            })
             @Html.ValidationMessageFor(model => model.Weight)
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.PlannedComplexity)
             @Html.EditorFor(model => model.PlannedComplexity, new
-       {
-           htmlAttributes = new { @class = "form-control", placeholder = "0.45" },
-       })
+            {
+                htmlAttributes = new { @class = "form-control", placeholder = "0.45" },
+            })
             @Html.ValidationMessageFor(model => model.PlannedComplexity)
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.PlannedTime)
             @Html.EditorFor(model => model.PlannedTime, new
-       {
-           htmlAttributes = new { @class = "form-control", placeholder = "500" },
-       })
+            {
+                htmlAttributes = new { @class = "form-control", placeholder = "500" },
+            })
             @Html.ValidationMessageFor(model => model.PlannedTime)
         </div>
-            <br />
-            <div>
-                <button type="submit" class="btn btn-default btn-mine">
-                    <span class="fi-save" style="font-size: 18px;"> Сохранить </span>
-                </button>
-                <button type="button" class="btn btn-default btn-mine">
-                    <span class="fi-x" style="font-size: 18px;">
-                        @Html.ActionLink("Отмена", "Get", "Topic", new { topicId = ViewBag.TopicId }, new {
-                       style= "color: #333333; text-decoration: none; "})
-                    </span>
-                </button>
-            </div>
+        <br />
+        <div>
+            <button type="submit" class="btn btn-default btn-mine">
+                <span class="fi-save" style="font-size: 18px;"> Сохранить </span>
+            </button>
+            <button type="button" class="btn btn-default btn-mine">
+                <span class="fi-x" style="font-size: 18px;">
+                    @Html.ActionLink("Отмена", "Get", "Topic", new { topicId = ViewBag.TopicId }, new
+                    {
+                        style = "color: #333333; text-decoration: none; "
+                    })
+                </span>
+            </button>
+        </div>
     }
 </div>
+<div id="dialog">
+    <iframe id="GraphIframe" src="" style="height: 800px; width: 1500px;"></iframe>
+</div>
+<!-- <iframe src="http://localhost:9847/Scripts/Graphics/index.html" ></iframe> -->

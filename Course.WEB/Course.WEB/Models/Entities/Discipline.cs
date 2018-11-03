@@ -31,6 +31,8 @@ namespace Course.WEB.Models.Entities
 
         public virtual ApplicationUser Creator { get; set; }
 
+        public int Order { get; set; }
+
         public Dictionary<string, string> GetProperties()
         {
             Dictionary<string, string> dictProperties = new Dictionary<string, string>
