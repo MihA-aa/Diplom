@@ -4,6 +4,7 @@ using Course.WEB.Helpers;
 using Course.WEB.Models;
 using Course.WEB.Models.Entities;
 using Course.WEB.Models.MyViewModel;
+using Microsoft.AspNet.Identity;
 
 namespace Course.WEB.Controllers
 {
@@ -28,12 +29,17 @@ namespace Course.WEB.Controllers
             var taskIds = topic.Tasks.Select(x => x.Id);
             var topicStatistic = db.TopicStatistics.Find(x => x.TopicId == topicId).FirstOrDefault();
             var tasksStatistic = db.TaskStatistics.Find(x => taskIds.Contains(x.TaskId)).ToList();
+            var solvedTasks = db.Ratings
+                .Find(x => x.StudentId == User.Identity.GetUserId() && taskIds.Contains(x.TaskId))
+                .GroupBy(x => x.TaskId, (key, g) => g.OrderBy(e => e.DateOfSolution).First())
+                .ToDictionary(x => x.TaskId, x => x.IsSolved);
 
             var viewModel = new TopicViewModel
             {
                 Topic = topic,
                 TopicStatistic = topicStatistic,
-                TasksStatistic = tasksStatistic
+                TasksStatistic = tasksStatistic,
+                SolvedTasks = solvedTasks,
             };
 
             return View(viewModel);

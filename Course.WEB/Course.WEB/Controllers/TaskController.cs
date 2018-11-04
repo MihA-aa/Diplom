@@ -126,7 +126,7 @@ namespace Course.WEB.Controllers
         }
 
         [HttpGet]
-        public ActionResult SolveGraphic(int taskId, bool isSolved)
+        public ActionResult SolveGraphic(int taskId, bool isSolved, int secondsToSolve)
         {
             var task = db.Tasks.Get(taskId);
             if (task == null)
@@ -138,14 +138,14 @@ namespace Course.WEB.Controllers
             {
                 TaskId = task.Id,
                 StudentId = User.Identity.GetUserId(),
-                ActualTime = 100,
+                ActualTime = secondsToSolve,
                 DateOfSolution = DateTime.Now,
                 IsSolved = isSolved
             };
             db.Ratings.Create(rating);
             db.Save();
 
-            TempData["message"] = string.Format("Задача \"{0}\" была решена " + (isSolved ? string.Empty : "не") + "верно, ваше время: {1} секунд", task.Name, 100);
+            TempData["message"] = string.Format("Задача \"{0}\" была решена " + (isSolved ? string.Empty : "не") + "верно, ваше время: {1} секунд", task.Name, secondsToSolve);
             TempData["resolve"] = isSolved;
 
             return JavaScript($"window.location = 'http://localhost:9847/Topic/Get?topicId={task.TopicId}'");

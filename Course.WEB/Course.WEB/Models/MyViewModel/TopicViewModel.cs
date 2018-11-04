@@ -10,5 +10,7 @@ namespace Course.WEB.Models.MyViewModel
         public TopicStatistic TopicStatistic { get; set; }
 
         public List<TaskStatistic> TasksStatistic { get; set; }
+
+        public Dictionary<int, bool> SolvedTasks { get; set; }
     }
 }

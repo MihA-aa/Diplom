@@ -1,4 +1,4 @@
-window.onload = function () {
+function UILayer() {
     var layoutPanel = $("#layoutPanel");
     var addLayout = $("#addLayout");
     var AllLayoutPanel = $("#AllLayoutPanel");

@@ -118,7 +118,8 @@ function Projection(shape, points3D) {
             }
         }.bind(this));
         return matches;
-    }
+	}
+	
     this.validateTask = function (task) {
         var result =
             {
@@ -152,7 +153,57 @@ function Projection(shape, points3D) {
 		result.isValid = this.isAllTasksValid(result.points);
         return result;
 	}
+		
+	this.validatePoint = function (){
+		var points = this.points3D.slice(0,3);
+
+		if(points.length !== 3){
+			return false;
+		}
+
+		const x = points.find(point => {
+			return point.y === 0
+		}).x;
+		const y = points.find(point => {
+			return point.x === 0
+		}).y;
+		const z = points.find(point => {
+			return point.y === 0
+		}).z;
+
+		isValid = points.every(function (point) {
+			return isZeroOrNeedValue(point.x, x)
+				&& isZeroOrNeedValue(point.y, y)
+				&& isZeroOrNeedValue(point.z, z);
+		});
+
+		return isValid;
+	}
+
+	this.getValues = function (shape){
+		if(shape == 'point'){
+			return this.getPointValues()
+		}
+	}
 	
+	this.getPointValues = function (){
+		var points = this.points3D.slice(0,3);
+		const x = points.find(point => {
+			return point.x !== 0
+		}).x;
+		const y = points.find(point => {
+			return point.y !== 0
+		}).y;
+		const z = points.find(point => {
+			return point.z !== 0
+		}).z;
+		return {
+			x: x,
+			y: y,
+			z: z
+		}
+	}
+
     this.isAllTasksValid = function (points) {
 		return points.every(function (point) {
 			return point.xy && point.xz && point.yz;
@@ -235,4 +286,8 @@ function Projection(shape, points3D) {
             });
         return e;
     };
+}
+
+function isZeroOrNeedValue(value, needValue){
+	return !value || value == needValue;
 }

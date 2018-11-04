@@ -37,7 +37,7 @@ function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, proj
 
     this.getTasks = function () {
 		var matches = document.referrer.match("http:\/\/localhost:9847\/Graphic\\?taskId=([0-9]+)");
-		var graphicTaskId = matches && matches[0]
+		var graphicTaskId = matches && matches[1]
 		var projectionManager = this;
 		if(graphicTaskId){
 			return new Promise(function(resolve) {
@@ -48,6 +48,7 @@ function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, proj
 						projectionManager.tasks = data.Projections.map(function (projection) {
 							return mapProjection(projection);
 						});
+						// projectionManager.tasks = [ {projection: new Projection('point', [new Point3D(90, 120, 150)])} ]
 						resolve(projectionManager.getTaskText(projectionManager.tasks));
 					}
 				});
@@ -168,7 +169,23 @@ function ProjectionManager(mediator, projectionPointsDrawer, stylesManager, proj
         return result;
     };
 
-    this.validateTask = function (taskIndex) {
+    this.getProjection = function (shape) {
+		return this.projections.find(projection => {
+			return projection.shape === shape.toString();
+		});
+	};
+
+    this.getProjectionValues = function (shape) {
+		var projection = this.getProjection(shape);
+		return projection.getValues(shape);
+	};
+	
+    this.isValidProjection = function (shape) {
+		var projection = this.getProjection(shape);
+		return projection && projection.validatePoint()
+	};
+
+    this.validateTask = function () {
         var results = [];
         var resolvedProjections = [];
         var unresolvedProjections = this.projections.slice(0);

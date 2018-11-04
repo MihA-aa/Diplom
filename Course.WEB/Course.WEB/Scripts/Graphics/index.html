@@ -29,7 +29,8 @@
     <script type="text/javascript" src="JS\Projection.js"></script>
     <script type="text/javascript" src="JS\ProjectionManager.js"></script>
     <script type="text/javascript" src="JS\Point3D.js"></script>
-    <script type="text/javascript" src="JS\Keyboard.js"></script>
+	<script type="text/javascript" src="JS\Keyboard.js"></script>
+	<script src="..\easytimer\dist\easytimer.min.js"></script>
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <!---CSS-->
@@ -55,6 +56,15 @@
         .ui-draggable, .ui-droppable {
             background-position: top;
         }
+		#setTaskProjection{
+			display: none;
+		}
+		#isValidMessage{
+			display: none;
+			margin: 13px 10px 0 10px;
+			color: red;
+			font-size: 18px;
+		}
     </style>
 </head>
 <body>
@@ -78,9 +88,16 @@
                 <button class="btn btn-danger navbar-btn bouton-image monBouton " id="projectionsSettings">
                     Задание
                 </button>
-            </li>
+                <button class="btn btn-danger navbar-btn bouton-image monBouton" id="setTaskProjection">
+                    Задать проекцию
+                </button>
+			</li>
+			<li id="isValidMessage">
+				Проекция не валидна!
+			</li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+            <li><a href="#"><span id="pageTimer"></span></a></li>
             <li><a href="#"><span class="glyphicon glyphicon-thumbs-up"></span> Press F11</a></li>
         </ul>
     </div>
@@ -359,14 +376,17 @@
     var undoRedo;
     var toolbox;
     var toolbox3D;
-    var layerManager;
+	var layerManager;
     var stylesManager = new StylesManager(mediator, settingsManager.settings.styles, settingsManager.settings.textStyles);
     var projectionPointsDrawer = new ProjectionPointsDrawer(mediator, stylesManager, settingsManager.settings.projections);
     var projectionManager = new ProjectionManager(mediator, projectionPointsDrawer, stylesManager, settingsManager.settings.projections);
+	var timer = new Timer();
+	timer.start();
     $(document).ready(function () {
-        paper.setup('myCanvas');
+		paper.setup('myCanvas');
         layerManager = new Layers(mediator);
-
+	
+		new UILayer();
 
         var background = new Background(mediator, settingsManager.settings.background, stylesManager);
         var scaling = new Scaling(mediator, settingsManager.settings.scaling, canvas);

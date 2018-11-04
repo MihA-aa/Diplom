@@ -4,10 +4,19 @@
 		minWidth: "1500px;", title: "Выберите проекцию", resizable: false,
 		open: function(ev, ui){
 			$('#GraphIframe').attr('src','http://localhost:9847/Scripts/Graphics/index.html');
+		 },
+		 close: function(ev, ui){
+			const outputData = $('#outputIframeData').text();
+			if(outputData){
+				parseOutputData(outputData);
+				$('#outputIframeData').text('')
+			}
 		 }
 	});
 });
-		
+
+var graphDialogInitiatorId
+
 $('.isGraphic').change(function () {
     if ($(this).is(':checked')) {
         $(".graphic-form").show("slow");
@@ -52,7 +61,20 @@ function getNewProjection(projectionId, shape) {
 
 function openGraphDialog(button){
 	var but = $(button);
+	graphDialogInitiatorId = but.parent().attr("index")
 	$("#dialog").dialog('open');
+}
+
+function parseOutputData(data){
+	var parsedData = JSON.parse(data);
+	setPointValues(parsedData, graphDialogInitiatorId);
+}
+
+function setPointValues(point, index){
+	const projection = $(`.projection[index=${index}]`);
+	projection.find("#X").val(point.x);
+	projection.find("#Y").val(point.y);
+	projection.find("#Z").val(point.z);
 }
 
 function getPoints(projectionId, shape) {

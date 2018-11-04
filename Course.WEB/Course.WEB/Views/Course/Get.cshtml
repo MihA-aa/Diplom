@@ -33,7 +33,7 @@ else
                         {
                             using (Html.BeginForm("Edit", "Topic", FormMethod.Get, new
                             {
-                                style = "display: inline-block; margin-right: 5px;"
+                                style = "display: inline-block; right: 45px; position: absolute; margin-top: -10px;"
                             }))
                             {
                                 @Html.Hidden("topicId", Model.Course.Topics.ToList()[i].Id)

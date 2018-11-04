@@ -10,6 +10,17 @@ $(document).ready(function () {
         'warning': '#f0ad4e',
         'danger': '#d9534f'
     };
+	const isInFrame = self !== top;
+	if(isInFrame){
+		$("#projectionsSettings").hide();
+		$("#setTaskProjection").show();
+	}
+	else{
+		timer.addEventListener('secondsUpdated', function (e) {
+			$('#pageTimer').html(timer.getTimeValues().toString());
+		});
+		
+	}
     $('.draggable').draggable({containment: "parent"});
 
     $('.taskResultsPanel').hide();
@@ -102,16 +113,29 @@ $(document).ready(function () {
         });
     });
 
+    $('#setTaskProjection').click(function () {
+		const shape = 'point';
+		const isValid = projectionManager.isValidProjection(shape);
+		if(!isValid){
+			$("#isValidMessage").show();
+			return;
+		}
+		var values = projectionManager.getProjectionValues(shape);
+		$('#outputIframeData', window.parent.document).text(JSON.stringify(values));
+		$(".ui-dialog-titlebar-close", window.parent.document).first().click();
+    });
+
     $('.taskCancel').click(function () {
-        history.back();
+		history.back();
     });
 
     $('.taskFinish').click(function () {
 		var graphicTaskId = document.referrer.match("http:\/\/localhost:9847\/Graphic\\?taskId=([0-9]+)")[1];
-        var isSolved = projectionManager.validateTask().every(projection => projection.isValid);
+		var isSolved = projectionManager.validateTask().every(projection => projection.isValid);
+		var seconds = timer.getTimeValues().seconds;
 		$.ajax({
 			type: 'GET',
-			url: '../../Task/SolveGraphic?taskId=' + graphicTaskId + '&isSolved=' + isSolved,
+			url: '../../Task/SolveGraphic?taskId=' + graphicTaskId + '&isSolved=' + isSolved + '&secondsToSolve=' + seconds,
 		  });
     });
 
